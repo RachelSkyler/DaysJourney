@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="java.lang.Thread"/>
+<fullyQualifiedTypeName name="java.lang.Exception"/>
+<fullyQualifiedTypeName name="com.example.daysjourney.SplashScreenActivity"/>
+<fullyQualifiedTypeName name="android.widget.Button"/>
+<fullyQualifiedTypeName name="com.example.daysjourney.MainActivity.ButtonClickHandler"/>
+<fullyQualifiedTypeName name="com.example.daysjourney.R.id"/>
+<fullyQualifiedTypeName name="android.content.Intent"/>
+<fullyQualifiedTypeName name="com.example.daysjourney.MainActivity"/>
+<fullyQualifiedTypeName name="com.example.daysjourney.SignInActivity"/>
+<fullyQualifiedTypeName name="com.example.daysjourney.SignUpActivity"/>
+<fullyQualifiedTypeName name="android.view.Window"/>
+<fullyQualifiedTypeName name="android.view.WindowManager"/>
+<fullyQualifiedTypeName name="android.view.WindowManager.LayoutParams"/>
+</qualifiedTypeNameHistroy>
