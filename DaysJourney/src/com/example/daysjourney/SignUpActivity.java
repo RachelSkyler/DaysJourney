@@ -8,20 +8,23 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
 /**
- * Activity which displays a login screen to the user, offering registration as
- * well.
+ * Activity for user sign up
  */
 public class SignUpActivity extends Activity {
 	/**
 	 * A dummy authentication store containing known user names and passwords.
+	 * Used for checking whether the user exists already.
+	 * Will delete it after connecting with server.
 	 * TODO: remove after connecting to a real authentication system.
 	 */
 	private static final String[] DUMMY_CREDENTIALS = new String[] {
@@ -37,16 +40,17 @@ public class SignUpActivity extends Activity {
 	 */
 	private UserLoginTask mAuthTask = null;
 
-	// Values for email and password at the time of the login attempt.
+	// Values for email and password at the time of the sign up attempt.
 	private String mEmail;
 	private String mPassword;
+	private String mPasswordConfirm;
 
-	// UI references.
 	private EditText mEmailView;
 	private EditText mPasswordView;
-	private View mLoginFormView;
-	private View mLoginStatusView;
-	private TextView mLoginStatusMessageView;
+	private EditText mPasswordConfirmView;
+	private View mSignUpFormView;
+	private View mSignUpStatusView;
+	private TextView mSignUpStatusMessageView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -60,28 +64,31 @@ public class SignUpActivity extends Activity {
 		mEmailView.setText(mEmail);
 
 		mPasswordView = (EditText) findViewById(R.id.password);
-		mPasswordView
+		mPasswordConfirmView = (EditText) findViewById(R.id.password_confirm);
+		mPasswordConfirmView
 				.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 					@Override
 					public boolean onEditorAction(TextView textView, int id,
 							KeyEvent keyEvent) {
 						if (id == R.id.sign_up || id == EditorInfo.IME_NULL) {
-							attemptLogin();
+							attemptSignUp();
 							return true;
 						}
 						return false;
 					}
 				});
 
-		mLoginFormView = findViewById(R.id.sign_up_form);
-		mLoginStatusView = findViewById(R.id.sign_up_status);
-		mLoginStatusMessageView = (TextView) findViewById(R.id.sign_up_tatus_message);
+		mSignUpFormView = findViewById(R.id.sign_up_form);
+		mSignUpStatusView = findViewById(R.id.sign_up_status);
+		mSignUpStatusMessageView = (TextView) findViewById(R.id.sign_up_status_message);
 
-		findViewById(R.id.sign_in_button).setOnClickListener(
+		Button btn = (Button)findViewById(R.id.sign_up_button);
+		System.out.println(btn == null);
+		findViewById(R.id.sign_up_button).setOnClickListener(
 				new View.OnClickListener() {
 					@Override
 					public void onClick(View view) {
-						attemptLogin();
+						attemptSignUp();
 					}
 				});
 	}
@@ -98,7 +105,7 @@ public class SignUpActivity extends Activity {
 	 * If there are form errors (invalid email, missing fields, etc.), the
 	 * errors are presented and no actual login attempt is made.
 	 */
-	public void attemptLogin() {
+	public void attemptSignUp() {
 		if (mAuthTask != null) {
 			return;
 		}
@@ -106,24 +113,15 @@ public class SignUpActivity extends Activity {
 		// Reset errors.
 		mEmailView.setError(null);
 		mPasswordView.setError(null);
+		mPasswordConfirmView.setError(null);
 
 		// Store values at the time of the login attempt.
 		mEmail = mEmailView.getText().toString();
 		mPassword = mPasswordView.getText().toString();
+		mPassword = mPasswordConfirmView.getText().toString();
 
 		boolean cancel = false;
 		View focusView = null;
-
-		// Check for a valid password.
-		if (TextUtils.isEmpty(mPassword)) {
-			mPasswordView.setError(getString(R.string.error_field_required));
-			focusView = mPasswordView;
-			cancel = true;
-		} else if (mPassword.length() < 4) {
-			mPasswordView.setError(getString(R.string.error_invalid_password));
-			focusView = mPasswordView;
-			cancel = true;
-		}
 
 		// Check for a valid email address.
 		if (TextUtils.isEmpty(mEmail)) {
@@ -135,6 +133,32 @@ public class SignUpActivity extends Activity {
 			focusView = mEmailView;
 			cancel = true;
 		}
+		
+		// Check for a valid password.
+		if (TextUtils.isEmpty(mPassword)) {
+			mPasswordView.setError(getString(R.string.error_field_required));
+			focusView = mPasswordView;
+			cancel = true;
+		} else if (mPassword.length() < 4) {
+			mPasswordView.setError(getString(R.string.error_invalid_password));
+			focusView = mPasswordView;
+			cancel = true;
+		}
+		
+		// Check for a valid password confirmation.
+		if(TextUtils.isEmpty(mPasswordConfirm)){
+			mPasswordConfirmView.setError(getString(R.string.error_field_required));
+			focusView = mPasswordConfirmView;
+			cancel = true;
+		}else if(mPasswordConfirm.length() < 4){
+			mPasswordConfirmView.setError(getString(R.string.error_invalid_password));
+			focusView = mPasswordConfirmView;
+			cancel = true;
+		}else if(!TextUtils.equals(mPassword, mPasswordConfirm)){
+			mPasswordConfirmView.setError(getString(R.string.error_incorrect_password_confirmation));
+			focusView = mPasswordConfirmView;
+			cancel = true;
+		}
 
 		if (cancel) {
 			// There was an error; don't attempt login and focus the first
@@ -143,7 +167,7 @@ public class SignUpActivity extends Activity {
 		} else {
 			// Show a progress spinner, and kick off a background task to
 			// perform the user login attempt.
-			mLoginStatusMessageView.setText(R.string.sign_in_progress);
+			mSignUpStatusMessageView.setText(R.string.sign_up_progress);
 			showProgress(true);
 			mAuthTask = new UserLoginTask();
 			mAuthTask.execute((Void) null);
@@ -162,32 +186,32 @@ public class SignUpActivity extends Activity {
 			int shortAnimTime = getResources().getInteger(
 					android.R.integer.config_shortAnimTime);
 
-			mLoginStatusView.setVisibility(View.VISIBLE);
-			mLoginStatusView.animate().setDuration(shortAnimTime)
+			mSignUpStatusView.setVisibility(View.VISIBLE);
+			mSignUpStatusView.animate().setDuration(shortAnimTime)
 					.alpha(show ? 1 : 0)
 					.setListener(new AnimatorListenerAdapter() {
 						@Override
 						public void onAnimationEnd(Animator animation) {
-							mLoginStatusView.setVisibility(show ? View.VISIBLE
+							mSignUpStatusView.setVisibility(show ? View.VISIBLE
 									: View.GONE);
 						}
 					});
 
-			mLoginFormView.setVisibility(View.VISIBLE);
-			mLoginFormView.animate().setDuration(shortAnimTime)
+			mSignUpFormView.setVisibility(View.VISIBLE);
+			mSignUpFormView.animate().setDuration(shortAnimTime)
 					.alpha(show ? 0 : 1)
 					.setListener(new AnimatorListenerAdapter() {
 						@Override
 						public void onAnimationEnd(Animator animation) {
-							mLoginFormView.setVisibility(show ? View.GONE
+							mSignUpFormView.setVisibility(show ? View.GONE
 									: View.VISIBLE);
 						}
 					});
 		} else {
 			// The ViewPropertyAnimator APIs are not available, so simply show
 			// and hide the relevant UI components.
-			mLoginStatusView.setVisibility(show ? View.VISIBLE : View.GONE);
-			mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+			mSignUpStatusView.setVisibility(show ? View.VISIBLE : View.GONE);
+			mSignUpFormView.setVisibility(show ? View.GONE : View.VISIBLE);
 		}
 	}
 

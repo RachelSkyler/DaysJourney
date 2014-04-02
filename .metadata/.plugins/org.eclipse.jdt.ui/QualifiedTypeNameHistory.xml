@@ -3,14 +3,19 @@
 <fullyQualifiedTypeName name="java.lang.Thread"/>
 <fullyQualifiedTypeName name="java.lang.Exception"/>
 <fullyQualifiedTypeName name="com.example.daysjourney.SplashScreenActivity"/>
-<fullyQualifiedTypeName name="android.widget.Button"/>
 <fullyQualifiedTypeName name="com.example.daysjourney.MainActivity.ButtonClickHandler"/>
-<fullyQualifiedTypeName name="com.example.daysjourney.R.id"/>
-<fullyQualifiedTypeName name="android.content.Intent"/>
 <fullyQualifiedTypeName name="com.example.daysjourney.MainActivity"/>
-<fullyQualifiedTypeName name="com.example.daysjourney.SignInActivity"/>
 <fullyQualifiedTypeName name="com.example.daysjourney.SignUpActivity"/>
 <fullyQualifiedTypeName name="android.view.Window"/>
 <fullyQualifiedTypeName name="android.view.WindowManager"/>
 <fullyQualifiedTypeName name="android.view.WindowManager.LayoutParams"/>
+<fullyQualifiedTypeName name="android.content.Intent"/>
+<fullyQualifiedTypeName name="com.example.daysjourney.SignInActivity"/>
+<fullyQualifiedTypeName name="com.example.daysjourney.UserPathActivity"/>
+<fullyQualifiedTypeName name="android.widget.EditText"/>
+<fullyQualifiedTypeName name="com.example.daysjourney.R.id"/>
+<fullyQualifiedTypeName name="com.example.daysjourney.R.string"/>
+<fullyQualifiedTypeName name="android.text.TextUtils"/>
+<fullyQualifiedTypeName name="android.util.Log"/>
+<fullyQualifiedTypeName name="android.widget.Button"/>
 </qualifiedTypeNameHistroy>

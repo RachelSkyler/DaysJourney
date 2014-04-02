@@ -37,7 +37,7 @@ public class UserPathActivity extends ActionBarActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		//setContentView(R.layout.main);
+		setContentView(R.layout.activity_user_path_main);
 
 		// Create the adapter that will return a fragment for each of the three
 		// primary sections of the activity.
@@ -45,7 +45,7 @@ public class UserPathActivity extends ActionBarActivity {
 				getSupportFragmentManager());
 
 		// Set up the ViewPager with the sections adapter.
-		//mViewPager = (ViewPager) findViewById(R.id.pager);
+		mViewPager = (ViewPager) findViewById(R.id.pager);
 		mViewPager.setAdapter(mSectionsPagerAdapter);
 
 	}
@@ -136,7 +136,7 @@ public class UserPathActivity extends ActionBarActivity {
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
-			View rootView = inflater.inflate(R.layout.fragment_main, container,
+			View rootView = inflater.inflate(R.layout.activity_user_path, container,
 					false);
 			TextView textView = (TextView) rootView
 					.findViewById(R.id.section_label);

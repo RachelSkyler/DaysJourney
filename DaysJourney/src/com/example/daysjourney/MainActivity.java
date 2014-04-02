@@ -1,20 +1,19 @@
 package com.example.daysjourney;
 
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
-import android.support.v4.app.Fragment;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.widget.Button;
-import android.os.Build;
 
-public class MainActivity extends ActionBarActivity {
+/**
+ * Activity for the very first main home page.
+ * With two buttons for going to both sign up and sign in pages.
+ * @author ajou
+ *
+ */
+public class MainActivity extends Activity {
 
 	public class ButtonClickHandler implements OnClickListener {
 
@@ -43,7 +42,7 @@ public class MainActivity extends ActionBarActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.activity_main_home);
 
 		Button signUpBtn = (Button) this.findViewById(R.id.sign_up_button);
 		Button signInBtn = (Button) this.findViewById(R.id.sign_in_button);
@@ -52,24 +51,5 @@ public class MainActivity extends ActionBarActivity {
 		signInBtn.setOnClickListener(new ButtonClickHandler());
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}
 
 }
