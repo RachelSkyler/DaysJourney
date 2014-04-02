@@ -22,12 +22,12 @@ public class MainActivity extends Activity {
 			// TODO Auto-generated method stub
 			int viewId = v.getId();
 			switch (viewId) {
-			case R.id.sign_in_button:
+			case R.id.sign_in_page_button:
 				Intent intent1 = new Intent(MainActivity.this, SignInActivity.class);
 				startActivity(intent1);
 				break;
 
-			case R.id.sign_up_button:
+			case R.id.sign_up_page_button:
 				Intent intent2 = new Intent(MainActivity.this, SignUpActivity.class);
 				startActivity(intent2);
 				break;
@@ -44,8 +44,8 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main_home);
 
-		Button signUpBtn = (Button) this.findViewById(R.id.sign_up_button);
-		Button signInBtn = (Button) this.findViewById(R.id.sign_in_button);
+		Button signUpBtn = (Button) this.findViewById(R.id.sign_up_page_button);
+		Button signInBtn = (Button) this.findViewById(R.id.sign_in_page_button);
 
 		signUpBtn.setOnClickListener(new ButtonClickHandler());
 		signInBtn.setOnClickListener(new ButtonClickHandler());

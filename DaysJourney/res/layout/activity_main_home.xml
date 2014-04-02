@@ -24,18 +24,18 @@
         android:layout_gravity="center_horizontal"
         >
         <Button 
-            android:id="@+id/sign_up_button"
+            android:id="@+id/sign_up_page_button"
         	android:layout_width="@dimen/button_width"
         	android:layout_height="wrap_content"
         	android:layout_marginLeft="@dimen/margin_side"
         	android:text="Sign Up for First Time"
         />
         <Button 
-            android:id="@+id/sign_in_button"
+            android:id="@+id/sign_in_page_button"
         	android:layout_width="@dimen/button_width"
         	android:layout_height="wrap_content"
 			android:layout_marginLeft="10dp"
-			android:layout_toRightOf="@id/sign_up_button"
+			android:layout_toRightOf="@id/sign_up_page_button"
         	android:text="Sign In"
         />
     </RelativeLayout>
