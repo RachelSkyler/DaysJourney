@@ -30,13 +30,13 @@
         android:theme="@style/AppTheme" >
 
         <!-- TODO: Should get another new API key -->
-        <!--
+        
         <uses-library android:name="com.google.android.maps" />
 
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyAPPleBgtffPbcRSUkfKu6V2DuV2cJJ5-4" />
-        -->
+            android:value="AIzaSyCihsvyF2rHF4yezhTzvveBn4_zH40XfN4" />
+       
 
         <activity
             android:name="common.MainActivity"

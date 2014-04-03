@@ -1,33 +1,43 @@
 package user;
 
-import com.example.daysjourney.R;
-import com.example.daysjourney.R.id;
-import com.example.daysjourney.R.layout;
-import com.example.daysjourney.R.menu;
-
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.view.LayoutInflater;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.os.Build;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.FrameLayout;
+
+import com.example.daysjourney.R;
 
 /**
- * Activity for the destination registration page.
- * For the first goal of us, Arduinos will only be equipped at home, not all destinations.
- * Therefore, this page will only get the user's email first,
- * and get input of a location from the user, then put it to the PATH table.
+ * Activity for the destination registration page. For the first goal of us,
+ * Arduinos will only be equipped at home, not all destinations. Therefore, this
+ * page will only get the user's email first, and get input of a location from
+ * the user, then put it to the PATH table.
  */
 public class RegisterDestinationActivity extends ActionBarActivity {
+
+	/**
+	 * FrameLayout of the map for registering a destination.
+	 */
+	FrameLayout mMapFrameLayout;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_register_destination);
+
+		Button searchLocationButton = (Button) this
+				.findViewById(R.id.search_location_button);
+		searchLocationButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// Go to the page for select a place
+				
+			}
+		});
 
 	}
 
@@ -50,6 +60,5 @@ public class RegisterDestinationActivity extends ActionBarActivity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-
 
 }
