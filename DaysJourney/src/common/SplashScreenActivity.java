@@ -1,5 +1,9 @@
-package com.example.daysjourney;
+package common;
 
+import com.example.daysjourney.R;
+import com.example.daysjourney.R.layout;
+
+import user.UserPathActivity;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
@@ -13,15 +17,15 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.os.Build;
+
 /**
  * Activity for the intro page of the application.
- * The intro page will last for 3 seconds and go to the home page 
- * (log in or sign up) directly.
- * @author ajou
- *
+ * The intro page will last for 3 seconds and go to the home page directly.
  */
 public class SplashScreenActivity extends ActionBarActivity {
-	
+	/**
+	 * Thread to count for 3 seconds.
+	 */
 	Thread mSplashThread;
 
 	@Override
@@ -34,7 +38,6 @@ public class SplashScreenActivity extends ActionBarActivity {
 
 		// Set the full screen for 3 seconds and go directly to the main home page
 		this.mSplashThread = new Thread(){
-
 			@Override
 			public void run() {
 				// Let's wait for 3 seconds
@@ -49,7 +52,12 @@ public class SplashScreenActivity extends ActionBarActivity {
 				finish();
 				
 				Intent intent = new Intent();
-				intent.setClass(SplashScreenActivity.this, MainActivity.class);
+				// Go to the user path page, not the main page directly
+				// After getting to the main page, 
+				// whether the user is signed in or not will be checked then
+				// After that, whether we should go to the main page to sign in or sign up
+				// will be determined
+				intent.setClass(SplashScreenActivity.this, UserPathActivity.class);
 				startActivity(intent);
 			}
 		};

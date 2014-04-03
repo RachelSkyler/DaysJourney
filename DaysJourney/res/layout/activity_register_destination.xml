@@ -1,0 +1,92 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center_horizontal" >
+
+    <!-- 
+    	Register a destination 
+     -->
+    
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_top_narrow"
+        android:text="@string/title_activity_register_destination"
+        android:textSize="30dp" />
+    
+    <TextView 
+        android:layout_width="@dimen/text_view_width"
+        android:layout_height="@dimen/text_view_height"
+        android:layout_marginTop="@dimen/margin_top_narrow"
+        android:gravity="center"
+        android:text="@string/text_my_location"
+        android:textSize="20dp"
+        android:textColor="@color/white_color"
+        android:background="@color/dark_blue_color"
+        />
+    <Button 
+        android:id="@+id/search_location_button"
+        android:layout_width="@dimen/text_view_width"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_top_super_narrow"
+        android:gravity="center"
+        android:text="@string/text_search"
+        android:textSize="20dp"
+        android:background="@color/sky_blue_color"
+        android:visibility="visible"
+        />
+    <FrameLayout 
+        android:id="@+id/destination_map"
+        android:layout_width="@dimen/text_view_width"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="@dimen/margin_top_narrow"
+        
+        android:layout_marginTop="@dimen/margin_top_super_narrow"
+        android:visibility="visible"
+        ></FrameLayout>
+    <!--
+    	Copy and paste this to the blank space above in FrameLayout tag 
+    	class="com.google.android.gms.maps.MapFragment" 
+    -->
+    
+    <!-- 
+    	Arduino registration for all destinations will be the further plan, not now. 
+     -->
+    <!-- 
+    <Button 
+        android:id="@+id/search_my_arduino_button"
+        android:layout_width="@dimen/text_view_width"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_top_narrow"
+        android:gravity="center"
+        android:text="@string/text_search_my_arduino"
+        android:textSize="20dp"
+        android:textColor="@color/white_color"
+        android:background="@color/dark_blue_color"
+        />
+    <TextView 
+        android:id="@+id/show_my_arduino_list"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_top_super_narrow"
+        android:gravity="center_horizontal"
+        /> -->
+
+</LinearLayout>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

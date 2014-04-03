@@ -1,0 +1,7 @@
+<resources>
+    
+    <!-- Strings related to destination registration -->
+    <string name="text_my_home_location">My Home Location</string>
+    <string name="text_search_my_arduino">Search My Arduino</string>
+
+</resources>

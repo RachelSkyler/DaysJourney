@@ -3,7 +3,7 @@
 
     <!--
         Base application theme, dependent on API level. This theme is replaced
-        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
+        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
     -->
     <style name="AppBaseTheme" parent="Theme.AppCompat.Light">
         <!--
@@ -17,6 +17,7 @@
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
 
+    <!-- Containers -->
     <style name="SigninFormContainer">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
@@ -28,6 +29,12 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:padding">16dp</item>
     </style>
+    
+    <!-- Colors -->
+    <color name="white_color">#EAEAEA</color>
+    <color name="red_color">#ffcc99</color>
+    <color name="dark_blue_color">#00005D</color>
+    <color name="sky_blue_color">#B2CCFF</color>
 
 
 

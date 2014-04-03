@@ -1,4 +1,10 @@
-package com.example.daysjourney;
+package user;
+
+import com.example.daysjourney.R;
+import com.example.daysjourney.R.id;
+import com.example.daysjourney.R.layout;
+import com.example.daysjourney.R.menu;
+import com.example.daysjourney.R.string;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -20,21 +26,15 @@ import android.widget.TextView;
  * Activity for user sign in page.
  * Check whether all the required information are filled.
  * If not, show error icon to the user.
+ * If sign in succeeds, change the static variable 'isSignedIn' in UserPathActivity to TRUE. 
  */
 public class SignInActivity extends Activity {
-	
-
-	/**
-	 * The default email to populate the email field with.
-	 */
-	public static final String EXTRA_EMAIL = "com.example.android.authenticatordemo.extra.EMAIL";
-
 	/**
 	 * Keep track of the login task to ensure we can cancel it if requested.
 	 */
 	private UserLoginTask mAuthTask = null;
 
-	// Values for email and password at the time of the login attempt.
+	// Values for email and password at the time of the login attempt
 	private String mEmail;
 	private String mPassword;
 
@@ -50,11 +50,8 @@ public class SignInActivity extends Activity {
 
 		setContentView(R.layout.activity_sign_in);
 
-		// Set up the login form.
-		mEmail = getIntent().getStringExtra(EXTRA_EMAIL);
+		// Set up the login form
 		mEmailView = (EditText) findViewById(R.id.email);
-		mEmailView.setText(mEmail);
-
 		mPasswordView = (EditText) findViewById(R.id.password);
 		mPasswordView
 				.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -99,18 +96,18 @@ public class SignInActivity extends Activity {
 			return;
 		}
 
-		// Reset errors.
+		// Reset errors
 		mEmailView.setError(null);
 		mPasswordView.setError(null);
 
-		// Store values at the time of the login attempt.
+		// Store values at the time of the login attempt
 		mEmail = mEmailView.getText().toString();
 		mPassword = mPasswordView.getText().toString();
 
 		boolean cancel = false;
 		View focusView = null;
 
-		// Check for a valid password.
+		// Check for a valid password
 		if (TextUtils.isEmpty(mPassword)) {
 			mPasswordView.setError(getString(R.string.error_field_required));
 			focusView = mPasswordView;
@@ -121,7 +118,7 @@ public class SignInActivity extends Activity {
 			cancel = true;
 		}
 
-		// Check for a valid email address.
+		// Check for a valid email address
 		if (TextUtils.isEmpty(mEmail)) {
 			mEmailView.setError(getString(R.string.error_field_required));
 			focusView = mEmailView;
@@ -134,11 +131,11 @@ public class SignInActivity extends Activity {
 
 		if (cancel) {
 			// There was an error; don't attempt login and focus the first
-			// form field with an error.
+			// form field with an error
 			focusView.requestFocus();
 		} else {
 			// Show a progress spinner, and start a background task to
-			// perform the user login attempt.
+			// perform the user login attempt
 			mLoginStatusMessageView.setText(R.string.sign_in_progress);
 			showProgress(true);
 			mAuthTask = new UserLoginTask();
@@ -152,7 +149,7 @@ public class SignInActivity extends Activity {
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
 	private void showProgress(final boolean show) {
 		// On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
-		// for very easy animations. 
+		// for very easy animations
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
 			int shortAnimTime = getResources().getInteger(
 					android.R.integer.config_shortAnimTime);
@@ -180,23 +177,23 @@ public class SignInActivity extends Activity {
 					});
 		} else {
 			// The ViewPropertyAnimator APIs are not available, so simply show
-			// and hide the relevant UI components.
+			// and hide the relevant UI components
 			mLoginStatusView.setVisibility(show ? View.VISIBLE : View.GONE);
 			mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
 		}
 	}
 
 	/**
-	 * Represents an asynchronous login/registration task used to authenticate
+	 * Represents an asynchronous login task used to authenticate
 	 * the user.
 	 */
 	public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 		@Override
 		protected Boolean doInBackground(Void... params) {
-			// TODO: attempt authentication against a network service.
-
+			
+			// TODO: attempt authentication against a network service
 			try {
-				// Simulate network access.
+				// Simulate network access
 				// Communicate with our server here
 				// Check the ID & Password
 				Thread.sleep(2000);
@@ -214,8 +211,11 @@ public class SignInActivity extends Activity {
 
 			if (success) {
 				// If sign in succeeded, go to the user path page
+				// Variable 'isSignedIn' defined in UserPathActivity changes
+				UserPathActivity.isSignedIn = true;
 				Intent intent = new Intent(SignInActivity.this, UserPathActivity.class);
 				startActivity(intent);
+				finish();
 			} else {
 				mPasswordView
 						.setError(getString(R.string.error_incorrect_password));

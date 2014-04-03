@@ -5,3 +5,5 @@
     android:layout_height="match_parent"
     tools:context="com.example.testswipe.MainActivity" />
 
+<!-- Go to activity_user_path_main -->
+

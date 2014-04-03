@@ -7,18 +7,16 @@
     <string name="main_home">Where Are You Going?</string>
 
     <!-- Activity titles -->
-    <string name="title_activity_main">Home</string>
-    <string name="title_activity_splash_screen">SplashScreenActivity</string>
+    <string name="title_activity_main_home">Home</string>
+    <string name="title_activity_splash_screen">Splash Intro Screen</string>
     <string name="title_activity_sign_in">Sign In</string>
     <string name="title_activity_sign_up">Sign Up</string>
+    <string name="title_activity_register_destination">New Destination</string>
+    <string name="title_activity_register_home">Register My Home</string>
 
     <!-- Titles for swipe pages -->
     <string name="title_section1">Section 1</string>
     <string name="title_section2">Section 2</string>
     <string name="title_section3">Section 3</string>
-    <string name="title_activity_fullscreen">FullscreenActivity</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
-    <string name="title_activity_intro_splash">IntroSplashActivity</string>
 
 </resources>

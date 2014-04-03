@@ -1,9 +1,16 @@
-package com.example.daysjourney;
+package user;
+
+import com.example.daysjourney.R;
+import com.example.daysjourney.R.id;
+import com.example.daysjourney.R.layout;
+import com.example.daysjourney.R.menu;
+import com.example.daysjourney.R.string;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,7 +25,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 /**
- * Activity for user sign up
+ * Activity for user sign up.
+ * Check whether all the required information are filled.
+ * If not, show error icon to the user.
+ * If sign up succeeds, go to the destination registering page for home registration
  */
 public class SignUpActivity extends Activity {
 	/**
@@ -29,18 +39,13 @@ public class SignUpActivity extends Activity {
 	 */
 	private static final String[] DUMMY_CREDENTIALS = new String[] {
 			"foo@example.com:hello", "bar@example.com:world" };
-
-	/**
-	 * The default email to populate the email field with.
-	 */
-	public static final String EXTRA_EMAIL = "com.example.android.authenticatordemo.extra.EMAIL";
-
+	
 	/**
 	 * Keep track of the login task to ensure we can cancel it if requested.
 	 */
 	private UserLoginTask mAuthTask = null;
 
-	// Values for email and password at the time of the sign up attempt.
+	// Values for email password and password confirmation at the time of the sign up attempt
 	private String mEmail;
 	private String mPassword;
 	private String mPasswordConfirm;
@@ -58,11 +63,8 @@ public class SignUpActivity extends Activity {
 
 		setContentView(R.layout.activity_sign_up);
 
-		// Set up the login form.
-		mEmail = getIntent().getStringExtra(EXTRA_EMAIL);
+		// Set up the sign up form
 		mEmailView = (EditText) findViewById(R.id.email);
-		mEmailView.setText(mEmail);
-
 		mPasswordView = (EditText) findViewById(R.id.password);
 		mPasswordConfirmView = (EditText) findViewById(R.id.password_confirm);
 		mPasswordConfirmView
@@ -101,29 +103,29 @@ public class SignUpActivity extends Activity {
 	}
 
 	/**
-	 * Attempts to sign in or register the account specified by the login form.
+	 * Attempts to sign up the account specified by the sign up form.
 	 * If there are form errors (invalid email, missing fields, etc.), the
-	 * errors are presented and no actual login attempt is made.
+	 * errors are presented and no actual sign up attempt is made.
 	 */
 	public void attemptSignUp() {
 		if (mAuthTask != null) {
 			return;
 		}
 
-		// Reset errors.
+		// Reset errors
 		mEmailView.setError(null);
 		mPasswordView.setError(null);
 		mPasswordConfirmView.setError(null);
 
-		// Store values at the time of the login attempt.
+		// Store values at the time of the sign up attempt
 		mEmail = mEmailView.getText().toString();
 		mPassword = mPasswordView.getText().toString();
-		mPassword = mPasswordConfirmView.getText().toString();
+		mPasswordConfirm = mPasswordConfirmView.getText().toString();
 
 		boolean cancel = false;
 		View focusView = null;
 
-		// Check for a valid email address.
+		// Check for a valid email address
 		if (TextUtils.isEmpty(mEmail)) {
 			mEmailView.setError(getString(R.string.error_field_required));
 			focusView = mEmailView;
@@ -134,7 +136,7 @@ public class SignUpActivity extends Activity {
 			cancel = true;
 		}
 		
-		// Check for a valid password.
+		// Check for a valid password
 		if (TextUtils.isEmpty(mPassword)) {
 			mPasswordView.setError(getString(R.string.error_field_required));
 			focusView = mPasswordView;
@@ -145,7 +147,7 @@ public class SignUpActivity extends Activity {
 			cancel = true;
 		}
 		
-		// Check for a valid password confirmation.
+		// Check for a valid password confirmation
 		if(TextUtils.isEmpty(mPasswordConfirm)){
 			mPasswordConfirmView.setError(getString(R.string.error_field_required));
 			focusView = mPasswordConfirmView;
@@ -161,7 +163,7 @@ public class SignUpActivity extends Activity {
 		}
 
 		if (cancel) {
-			// There was an error; don't attempt login and focus the first
+			// There was an error; don't attempt sign up and focus the first
 			// form field with an error.
 			focusView.requestFocus();
 		} else {
@@ -175,13 +177,13 @@ public class SignUpActivity extends Activity {
 	}
 
 	/**
-	 * Shows the progress UI and hides the login form.
+	 * Shows the progress UI and hides the sign up form.
 	 */
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
 	private void showProgress(final boolean show) {
 		// On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
 		// for very easy animations. If available, use these APIs to fade-in
-		// the progress spinner.
+		// the progress spinner
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
 			int shortAnimTime = getResources().getInteger(
 					android.R.integer.config_shortAnimTime);
@@ -209,37 +211,40 @@ public class SignUpActivity extends Activity {
 					});
 		} else {
 			// The ViewPropertyAnimator APIs are not available, so simply show
-			// and hide the relevant UI components.
+			// and hide the relevant UI components
 			mSignUpStatusView.setVisibility(show ? View.VISIBLE : View.GONE);
 			mSignUpFormView.setVisibility(show ? View.GONE : View.VISIBLE);
 		}
 	}
 
 	/**
-	 * Represents an asynchronous login/registration task used to authenticate
+	 * Represents an asynchronous sign up task used to authenticate
 	 * the user.
 	 */
 	public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 		@Override
 		protected Boolean doInBackground(Void... params) {
-			// TODO: attempt authentication against a network service.
-
+			
+			// TODO: attempt authentication against a network service
 			try {
-				// Simulate network access.
+				// Simulate network access
+				// Communicate with our server here
 				Thread.sleep(2000);
 			} catch (InterruptedException e) {
 				return false;
 			}
-
+			
+			// TODO: should check whether the email has already been signed up before
+			// In our project, we will get the information in JSON format
 			for (String credential : DUMMY_CREDENTIALS) {
 				String[] pieces = credential.split(":");
 				if (pieces[0].equals(mEmail)) {
-					// Account exists, return true if the password matches.
+					// Account email exists, return true if the password matches
 					return pieces[1].equals(mPassword);
 				}
 			}
 
-			// TODO: register the new account here.
+			// TODO: register the new account here
 			return true;
 		}
 
@@ -249,10 +254,16 @@ public class SignUpActivity extends Activity {
 			showProgress(false);
 
 			if (success) {
+				// TODO: Both sign UP and sign IN are supposed to be completed
+				// automatically and go to the user destination registration page
+				// TRANSACTION is needed 
+				Intent intent = new Intent(SignUpActivity.this, RegisterHomeActivity.class);
+				intent.putExtra("email", mEmail);
+				startActivity(intent);
 				finish();
 			} else {
 				mPasswordView
-						.setError(getString(R.string.error_incorrect_password));
+						.setError(getString(R.string.error_sign_up_failed));
 				mPasswordView.requestFocus();
 			}
 		}

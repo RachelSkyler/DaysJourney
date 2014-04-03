@@ -5,8 +5,14 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     
     <!-- Numbers -->
+    <!-- margin -->
     <dimen name="margin_top">50dp</dimen>
+    <dimen name="margin_top_narrow">20dp</dimen>
+    <dimen name="margin_top_super_narrow">10dp</dimen>
     <dimen name="margin_side">20dp</dimen>
+    <!-- width & height -->
     <dimen name="button_width">120dp</dimen>
+    <dimen name="text_view_width">240dp</dimen>
+    <dimen name="text_view_height">30dp</dimen>
 
 </resources>

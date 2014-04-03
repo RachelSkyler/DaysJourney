@@ -1,6 +1,13 @@
-package com.example.daysjourney;
+package user;
 
 import java.util.Locale;
+
+import com.example.daysjourney.R;
+import com.example.daysjourney.R.id;
+import com.example.daysjourney.R.layout;
+import com.example.daysjourney.R.menu;
+import com.example.daysjourney.R.string;
+import common.MainActivity;
 
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
@@ -8,6 +15,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.view.Gravity;
@@ -18,14 +26,29 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+/**
+ * Activity for the user path page.
+ * Whether user is signed in or not will be checked at the very first.
+ * If signed in, the user's path will be displayed;
+ * If not, user will be required to go to the main home page for sign in or sign up,
+ * based on their choice.
+ * Three fragments for swipe view are contained in this page.
+ * First for the user's path,
+ * Second for the real-time information of user's home,
+ * Last for home control.
+ *
+ */
 public class UserPathActivity extends ActionBarActivity {
+	/** 
+	 * This variable is used for checking whether signed in or not.
+	 *  If signed in, user path page will be shown. 
+	 *  If not, user will go to the main home page (MainActivity) to sign up or sign in
+	**/
+	static boolean isSignedIn = false;
 
 	/**
 	 * The {@link android.support.v4.view.PagerAdapter} that will provide
-	 * fragments for each of the sections. We use a {@link FragmentPagerAdapter}
-	 * derivative, which will keep every loaded fragment in memory. If this
-	 * becomes too memory intensive, it may be best to switch to a
-	 * {@link android.support.v4.app.FragmentStatePagerAdapter}.
+	 * fragments for each of the sections. 
 	 */
 	SectionsPagerAdapter mSectionsPagerAdapter;
 
@@ -37,14 +60,25 @@ public class UserPathActivity extends ActionBarActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		// TODO: Check whether the user is signed in or not
+		// If not signed in, go to the main activity (main home page) to 
+		// sign in or sign up
+		// Simulation of signed in or signed out
+		if(!isSignedIn){
+			Intent intent = new Intent(UserPathActivity.this, MainActivity.class);
+			startActivity(intent);
+			finish();
+		}
+		
 		setContentView(R.layout.activity_user_path_main);
 
 		// Create the adapter that will return a fragment for each of the three
-		// primary sections of the activity.
+		// primary sections of the activity
 		mSectionsPagerAdapter = new SectionsPagerAdapter(
 				getSupportFragmentManager());
 
-		// Set up the ViewPager with the sections adapter.
+		// Set up the ViewPager with the sections adapter
 		mViewPager = (ViewPager) findViewById(R.id.pager);
 		mViewPager.setAdapter(mSectionsPagerAdapter);
 
@@ -53,7 +87,7 @@ public class UserPathActivity extends ActionBarActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 
-		// Inflate the menu; this adds items to the action bar if it is present.
+		// Inflate the menu; this adds items to the action bar if it is present
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
@@ -62,7 +96,7 @@ public class UserPathActivity extends ActionBarActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle action bar item clicks here. The action bar will
 		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
+		// as you specify a parent activity in AndroidManifest.xml
 		int id = item.getItemId();
 		if (id == R.id.action_settings) {
 			return true;
@@ -82,16 +116,16 @@ public class UserPathActivity extends ActionBarActivity {
 
 		@Override
 		public Fragment getItem(int position) {
-			// getItem is called to instantiate the fragment for the given page.
+			// getItem is called to instantiate the fragment for the given page
 			// Return a PlaceholderFragment (defined as a static inner class
-			// below).
+			// below)
 			return PlaceholderFragment.newInstance(position + 1);
 		}
 
 		@Override
 		public int getCount() {
-			// Show 3 total pages.
-			return 4;
+			// Show 3 total pages
+			return 3;
 		}
 
 		@Override

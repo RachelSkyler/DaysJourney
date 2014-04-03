@@ -1,5 +1,11 @@
-package com.example.daysjourney;
+package common;
 
+import com.example.daysjourney.R;
+import com.example.daysjourney.R.id;
+import com.example.daysjourney.R.layout;
+
+import user.SignInActivity;
+import user.SignUpActivity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,9 +14,10 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 
 /**
- * Activity for the very first main home page.
+ * Activity for the main home page.
  * With two buttons for going to both sign up and sign in pages.
- * @author ajou
+ * If user is signed in, this page will be skipped.
+ * @author RachelSkyler
  *
  */
 public class MainActivity extends Activity {
@@ -19,7 +26,6 @@ public class MainActivity extends Activity {
 
 		@Override
 		public void onClick(View v) {
-			// TODO Auto-generated method stub
 			int viewId = v.getId();
 			switch (viewId) {
 			case R.id.sign_in_page_button:
