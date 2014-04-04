@@ -1,7 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background_color"
     android:orientation="vertical"
     android:gravity="center_horizontal" >
 
@@ -14,6 +16,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_top_narrow"
         android:text="@string/title_activity_register_destination"
+        android:textStyle="bold"
         android:textSize="30dp" />
     
     <TextView 
@@ -37,19 +40,24 @@
         android:background="@color/sky_blue_color"
         android:visibility="visible"
         />
-    <FrameLayout 
-        android:id="@+id/destination_map"
-        android:layout_width="@dimen/text_view_width"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="@dimen/margin_top_narrow"
-        
-        android:layout_marginTop="@dimen/margin_top_super_narrow"
-        android:visibility="visible"
-        ></FrameLayout>
-    <!--
-    	Copy and paste this to the blank space above in FrameLayout tag 
-    	class="com.google.android.gms.maps.MapFragment" 
-    -->
+    
+    <RelativeLayout 
+    	android:id="@+id/destination_map_layout"
+	    android:layout_width="match_parent"
+	    android:layout_height="120dp"
+    	android:gravity="center"
+        >
+	    <fragment 
+	        android:id="@+id/destination_map"
+	        android:name="com.google.android.gms.maps.MapFragment"
+	        android:layout_width="match_parent"
+	        android:layout_height="match_parent"
+	        android:layout_marginBottom="@dimen/margin_top_narrow"
+	        
+	        android:layout_marginTop="@dimen/margin_top_super_narrow"
+	        android:visibility="visible"
+	        ></fragment>
+    </RelativeLayout>
     
     <!-- 
     	Arduino registration for all destinations will be the further plan, not now. 

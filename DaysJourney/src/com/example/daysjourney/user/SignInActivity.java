@@ -1,4 +1,4 @@
-package user;
+package com.example.daysjourney.user;
 
 import com.example.daysjourney.R;
 import com.example.daysjourney.R.id;
@@ -212,8 +212,8 @@ public class SignInActivity extends Activity {
 			if (success) {
 				// If sign in succeeded, go to the user path page
 				// Variable 'isSignedIn' defined in UserPathActivity changes
-				UserPathActivity.isSignedIn = true;
-				Intent intent = new Intent(SignInActivity.this, UserPathActivity.class);
+				UserPageActivity.isSignedIn = true;
+				Intent intent = new Intent(SignInActivity.this, UserPageActivity.class);
 				startActivity(intent);
 				finish();
 			} else {

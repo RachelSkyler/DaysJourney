@@ -13,10 +13,12 @@
     <string name="title_activity_sign_up">Sign Up</string>
     <string name="title_activity_register_destination">New Destination</string>
     <string name="title_activity_register_home">Register My Home</string>
+    <string name="title_activity_search_place">Search Place</string>
+    <string name="title_activity_user_path">Today\'s Path</string>
 
     <!-- Titles for swipe pages -->
-    <string name="title_section1">Section 1</string>
-    <string name="title_section2">Section 2</string>
-    <string name="title_section3">Section 3</string>
+    <string name="title_section1">User Path</string>
+    <string name="title_section2">Environment Information</string>
+    <string name="title_section3">Environment Control</string>
 
 </resources>

@@ -1,9 +1,9 @@
-package common;
+package com.example.daysjourney.common;
 
 import com.example.daysjourney.R;
 import com.example.daysjourney.R.layout;
+import com.example.daysjourney.user.UserPageActivity;
 
-import user.UserPathActivity;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
@@ -57,7 +57,7 @@ public class SplashScreenActivity extends ActionBarActivity {
 				// whether the user is signed in or not will be checked then
 				// After that, whether we should go to the main page to sign in or sign up
 				// will be determined
-				intent.setClass(SplashScreenActivity.this, UserPathActivity.class);
+				intent.setClass(SplashScreenActivity.this, UserPageActivity.class);
 				startActivity(intent);
 			}
 		};

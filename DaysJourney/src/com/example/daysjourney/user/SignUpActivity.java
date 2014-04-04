@@ -1,4 +1,4 @@
-package user;
+package com.example.daysjourney.user;
 
 import com.example.daysjourney.R;
 import com.example.daysjourney.R.id;
@@ -257,6 +257,7 @@ public class SignUpActivity extends Activity {
 				// TODO: Both sign UP and sign IN are supposed to be completed
 				// automatically and go to the user destination registration page
 				// TRANSACTION is needed 
+				UserPageActivity.isSignedIn = true;
 				Intent intent = new Intent(SignUpActivity.this, RegisterHomeActivity.class);
 				intent.putExtra("email", mEmail);
 				startActivity(intent);

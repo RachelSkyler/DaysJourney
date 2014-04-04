@@ -1,4 +1,4 @@
-package user;
+package com.example.daysjourney.user;
 
 import java.util.Locale;
 
@@ -7,7 +7,7 @@ import com.example.daysjourney.R.id;
 import com.example.daysjourney.R.layout;
 import com.example.daysjourney.R.menu;
 import com.example.daysjourney.R.string;
-import common.MainActivity;
+import com.example.daysjourney.common.MainActivity;
 
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
@@ -25,30 +25,32 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
- * Activity for the user path page.
- * Whether user is signed in or not will be checked at the very first.
- * If signed in, the user's path will be displayed;
- * If not, user will be required to go to the main home page for sign in or sign up,
- * based on their choice.
- * Three fragments for swipe view are contained in this page.
- * First for the user's path,
- * Second for the real-time information of user's home,
- * Last for home control.
- *
+ * Activity for the user page. Whether user is signed in or not will be
+ * checked at the very first. If signed in, the user's path will be displayed;
+ * If not, user will be required to go to the main home page for sign in or sign
+ * up, based on their choice. 
+ * Three fragments for swipe view are contained in this page. 
+ * First for the user's path, 
+ * Second for the real-time information of user's home, 
+ * Last for home control,
+ * which will be controlled by three activities 
+ * (UserPathActivity, EnvirontmentInfoActivity, EnvironmentControlActivity).
+ * 
  */
-public class UserPathActivity extends ActionBarActivity {
-	/** 
-	 * This variable is used for checking whether signed in or not.
-	 *  If signed in, user path page will be shown. 
-	 *  If not, user will go to the main home page (MainActivity) to sign up or sign in
-	**/
-	static boolean isSignedIn = false;
+public class UserPageActivity extends ActionBarActivity {
+	/**
+	 * This variable is used for checking whether signed in or not. If signed
+	 * in, user path page will be shown. If not, user will go to the main home
+	 * page (MainActivity) to sign up or sign in
+	 **/
+	public static boolean isSignedIn = false;
 
 	/**
 	 * The {@link android.support.v4.view.PagerAdapter} that will provide
-	 * fragments for each of the sections. 
+	 * fragments for each of the sections.
 	 */
 	SectionsPagerAdapter mSectionsPagerAdapter;
 
@@ -60,17 +62,18 @@ public class UserPathActivity extends ActionBarActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		// TODO: Check whether the user is signed in or not
-		// If not signed in, go to the main activity (main home page) to 
+		// If not signed in, go to the main activity (main home page) to
 		// sign in or sign up
 		// Simulation of signed in or signed out
-		if(!isSignedIn){
-			Intent intent = new Intent(UserPathActivity.this, MainActivity.class);
+		if (!isSignedIn) {
+			Intent intent = new Intent(UserPageActivity.this,
+					MainActivity.class);
 			startActivity(intent);
 			finish();
 		}
-		
+
 		setContentView(R.layout.activity_user_path_main);
 
 		// Create the adapter that will return a fragment for each of the three
@@ -82,26 +85,6 @@ public class UserPathActivity extends ActionBarActivity {
 		mViewPager = (ViewPager) findViewById(R.id.pager);
 		mViewPager.setAdapter(mSectionsPagerAdapter);
 
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-
-		// Inflate the menu; this adds items to the action bar if it is present
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml
-		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
 	}
 
 	/**
@@ -170,28 +153,48 @@ public class UserPathActivity extends ActionBarActivity {
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
-			View rootView = inflater.inflate(R.layout.activity_user_path, container,
-					false);
-			TextView textView = (TextView) rootView
-					.findViewById(R.id.section_label);
-			textView.setText(Integer.toString(getArguments().getInt(
-					ARG_SECTION_NUMBER)));
+			int pageNum = getArguments().getInt(ARG_SECTION_NUMBER);
+			View rootView = null;
+			switch (pageNum) {
+			case 1:
+				rootView = inflater.inflate(R.layout.activity_user_path,
+						container, false);
+				break;
+			case 2:
+				rootView = inflater.inflate(R.layout.activity_environment_info,
+						container, false);
+			case 3:
+				rootView = inflater.inflate(R.layout.activity_environment_control,
+						container, false);
+			default:
+				break;
+			}
 			return rootView;
 		}
 	}
 
+	private void showToastMsg(String msg) {
+		Toast.makeText(getApplication(), msg, Toast.LENGTH_LONG).show();
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+
+		// Inflate the menu; this adds items to the action bar if it is present
+		getMenuInflater().inflate(R.menu.main, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Handle action bar item clicks here. The action bar will
+		// automatically handle clicks on the Home/Up button, so long
+		// as you specify a parent activity in AndroidManifest.xml
+		int id = item.getItemId();
+		if (id == R.id.action_settings) {
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

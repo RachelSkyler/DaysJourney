@@ -1,11 +1,12 @@
-package common;
+package com.example.daysjourney.common;
 
 import com.example.daysjourney.R;
 import com.example.daysjourney.R.id;
 import com.example.daysjourney.R.layout;
+import com.example.daysjourney.user.SignInActivity;
+import com.example.daysjourney.user.SignUpActivity;
+import com.example.daysjourney.user.UserPageActivity;
 
-import user.SignInActivity;
-import user.SignUpActivity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -48,6 +49,11 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		// If user is signed in, do not show this page
+		if(UserPageActivity.isSignedIn == true)
+			finish();
+		
 		setContentView(R.layout.activity_main_home);
 
 		Button signUpBtn = (Button) this.findViewById(R.id.sign_up_page_button);

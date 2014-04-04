@@ -9,12 +9,14 @@
         android:targetSdkVersion="19" />
 
     <permission
-        android:name="com.example.lbs.map.permission.MAPS_RECEIVE"
+        android:name="com.example.daysjourney.MAPS_RECEIVE"
         android:protectionLevel="signature" >
     </permission>
 
+    <uses-permission android:name="com.example.daysjourney.permission.MAPS_RECEIVE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -30,20 +32,25 @@
         android:theme="@style/AppTheme" >
 
         <!-- TODO: Should get another new API key -->
-        
+
         <uses-library android:name="com.google.android.maps" />
 
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyCihsvyF2rHF4yezhTzvveBn4_zH40XfN4" />
-       
+            android:value="AIzaSyBkua5Ri5Oa1HCSOmsHdjZu7SdE_2Nhrrg" />
+        <!-- 학교: AIzaSyBkua5Ri5Oa1HCSOmsHdjZu7SdE_2Nhrrg -->
+        <!-- 집: AIzaSyCihsvyF2rHF4yezhTzvveBn4_zH40XfN4 -->
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
 
         <activity
-            android:name="common.MainActivity"
+            android:name="com.example.daysjourney.common.MainActivity"
             android:label="@string/title_activity_main_home" >
         </activity>
         <activity
-            android:name="common.SplashScreenActivity"
+            android:name="com.example.daysjourney.common.SplashScreenActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -52,7 +59,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="user.UserPathActivity"
+            android:name="com.example.daysjourney.user.UserPageActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -61,23 +68,32 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="user.SignInActivity"
+            android:name="com.example.daysjourney.user.SignInActivity"
             android:label="@string/title_activity_sign_in"
             android:windowSoftInputMode="adjustResize|stateVisible" >
         </activity>
         <activity
-            android:name="user.SignUpActivity"
+            android:name="com.example.daysjourney.user.SignUpActivity"
             android:label="@string/title_activity_sign_up"
             android:windowSoftInputMode="adjustResize|stateVisible" >
         </activity>
         <activity
-            android:name="user.RegisterDestinationActivity"
+            android:name="com.example.daysjourney.user.RegisterDestinationActivity"
             android:label="@string/title_activity_register_destination" >
         </activity>
         <activity
-            android:name="user.RegisterHomeActivity"
+            android:name="com.example.daysjourney.user.RegisterHomeActivity"
             android:label="@string/title_activity_register_home" >
         </activity>
+        <activity
+            android:name="com.example.daysjourney.map.SearchPlaceActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_search_place"
+            android:theme="@style/FullscreenTheme" >
+
+            <!-- No Title Bar: "@android:style/Theme.NoTitleBar.Fullscreen" -->
+        </activity>
+        
     </application>
 
 </manifest>

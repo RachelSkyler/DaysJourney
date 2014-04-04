@@ -1,0 +1,12 @@
+<resources>
+    
+    <!-- Strings related to user path -->
+    <string name="text_user_path_home_button">Home</string>
+    <string name="text_user_path_add_place">+  Add a Place</string>
+    
+    <!-- Strings related to environment info -->
+    
+    
+    <!-- Strings related to environment control -->
+
+</resources>
