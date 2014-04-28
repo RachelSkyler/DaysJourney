@@ -25,7 +25,6 @@ import android.widget.Toast;
 
 import com.example.daysjourney.R;
 import com.example.daysjourney.common.MainActivity;
-import com.example.daysjourney.map.CompassView;
 import com.example.daysjourney.map.SearchPlaceActivity;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -45,8 +44,6 @@ public class RegisterDestinationActivity extends Activity {
 	 */
 	GoogleMap mDestinationMap;
 	SensorManager mSensorMngr;
-	boolean mCompassEnabled;
-	CompassView mCompassView;
 
 	private static final String TAG = "RegisterDestinationActivityLog";
 
@@ -62,20 +59,10 @@ public class RegisterDestinationActivity extends Activity {
 		this.mDestinationMap = ((MapFragment) this.getFragmentManager()
 				.findFragmentById(R.id.destination_map)).getMap();
 
-		boolean sideBottom = true;
-		this.mCompassView = new CompassView(this, sideBottom);
-		this.mCompassView.setVisibility(View.VISIBLE);
-		this.mCompassEnabled = true;
 
 		RelativeLayout destinationMapLayout = (RelativeLayout) this
 				.findViewById(R.id.destination_map_layout);
-		final RelativeLayout.LayoutParams compassParams = new RelativeLayout.LayoutParams(
-				RelativeLayout.LayoutParams.WRAP_CONTENT,
-				RelativeLayout.LayoutParams.WRAP_CONTENT);
-		compassParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-		compassParams.addRule(sideBottom ? RelativeLayout.ALIGN_PARENT_BOTTOM
-				: RelativeLayout.ALIGN_TOP);
-		destinationMapLayout.addView(mCompassView, compassParams);
+		
 
 		RegisterDestinationActivity.this.startLocationService();
 
@@ -174,7 +161,20 @@ public class RegisterDestinationActivity extends Activity {
 		// TODO Auto-generated method stub
 		super.onPause();
 		this.mDestinationMap.setMyLocationEnabled(false);
-		this.mCompassEnabled=false;
+	}
+
+	@Override
+	protected void onStop() {
+		// TODO Auto-generated method stub
+		super.onStop();
+		this.mDestinationMap.setMyLocationEnabled(false);
+	}
+
+	@Override
+	protected void onDestroy() {
+		// TODO Auto-generated method stub
+		super.onDestroy();
+		this.mDestinationMap.setMyLocationEnabled(false);
 	}
 
 	@Override
@@ -182,9 +182,6 @@ public class RegisterDestinationActivity extends Activity {
 		// TODO Auto-generated method stub
 		super.onResume();
 		this.mDestinationMap.setMyLocationEnabled(true);
-		if(this.mCompassEnabled){
-			this.mSensorMngr.registerListener(mListener, this.mSensorMngr.getDefaultSensor(Sensor.TYPE_ORIENTATION), this.mSensorMngr.SENSOR_DELAY_UI);
-		}
 	}
 
 	
@@ -208,27 +205,6 @@ public class RegisterDestinationActivity extends Activity {
 		return super.onOptionsItemSelected(item);
 	}
 	
-
-	private final SensorEventListener mListener=new SensorEventListener() {
-		private int iOrientation=-1;
-		
-		@Override
-		public void onSensorChanged(SensorEvent event) {
-			// TODO Auto-generated method stub
-			if(this.iOrientation<0){
-				this.iOrientation=((WindowManager) RegisterDestinationActivity.this.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getOrientation();
-				mCompassView.setAzimuth(event.values[0]+90*iOrientation);
-				mCompassView.invalidate();
-				Log.i(TAG, "New Azimuth --> "+event.values[0] + 90 * iOrientation);
-			}
-		}
-		
-		@Override
-		public void onAccuracyChanged(Sensor sensor, int accuracy) {
-			// TODO Auto-generated method stub
-			
-		}
-	};
 
 
 }

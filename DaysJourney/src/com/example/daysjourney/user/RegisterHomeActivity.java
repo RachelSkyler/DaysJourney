@@ -25,7 +25,6 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.example.daysjourney.R;
-import com.example.daysjourney.map.CompassView;
 import com.example.daysjourney.map.SearchPlaceActivity;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -162,6 +161,20 @@ public class RegisterHomeActivity extends Activity {
 		this.mHomeMap.setMyLocationEnabled(false);
 	}
 
+
+	@Override
+	protected void onStop() {
+		// TODO Auto-generated method stub
+		super.onStop();
+		this.mHomeMap.setMyLocationEnabled(false);
+	}
+
+	@Override
+	protected void onDestroy() {
+		// TODO Auto-generated method stub
+		super.onDestroy();
+		this.mHomeMap.setMyLocationEnabled(false);
+	}
 	@Override
 	protected void onResume() {
 		// TODO Auto-generated method stub

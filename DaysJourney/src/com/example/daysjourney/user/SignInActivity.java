@@ -1,10 +1,15 @@
 package com.example.daysjourney.user;
 
-import com.example.daysjourney.R;
-import com.example.daysjourney.R.id;
-import com.example.daysjourney.R.layout;
-import com.example.daysjourney.R.menu;
-import com.example.daysjourney.R.string;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -15,6 +20,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
@@ -22,11 +28,13 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.example.daysjourney.R;
+import com.example.daysjourney.util.UrlSource;
+
 /**
- * Activity for user sign in page.
- * Check whether all the required information are filled.
- * If not, show error icon to the user.
- * If sign in succeeds, change the static variable 'isSignedIn' in UserPathActivity to TRUE. 
+ * Activity for user sign in page. Check whether all the required information
+ * are filled. If not, show error icon to the user. If sign in succeeds, change
+ * the static variable 'isSignedIn' in UserPathActivity to TRUE.
  */
 public class SignInActivity extends Activity {
 	/**
@@ -87,9 +95,9 @@ public class SignInActivity extends Activity {
 	}
 
 	/**
-	 * Attempts to sign in the account specified by the login form.
-	 * If there are form errors (invalid email, missing fields, etc.), 
-	 * errors are presented and no actual login attempt is made.
+	 * Attempts to sign in the account specified by the login form. If there are
+	 * form errors (invalid email, missing fields, etc.), errors are presented
+	 * and no actual login attempt is made.
 	 */
 	public void attemptLogin() {
 		if (mAuthTask != null) {
@@ -184,22 +192,53 @@ public class SignInActivity extends Activity {
 	}
 
 	/**
-	 * Represents an asynchronous login task used to authenticate
-	 * the user.
+	 * Represents an asynchronous login task used to authenticate the user.
 	 */
 	public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
+		String url = new UrlSource().getUrlRoot() + "test.iotweb";
+		
 		@Override
 		protected Boolean doInBackground(Void... params) {
+			StringBuilder strBuilder=new StringBuilder();
+			
+			HttpPost httpPost = new HttpPost(url);
+			Log.i("signin", httpPost.getURI().toString());
+			HttpClient client = new DefaultHttpClient();
+			httpPost.setHeader("Content-Type",
+					"application/x-www-form-urlencoded");
 			
 			// TODO: attempt authentication against a network service
 			try {
 				// Simulate network access
 				// Communicate with our server here
 				// Check the ID & Password
-				Thread.sleep(2000);
-			} catch (InterruptedException e) {
-				return false;
+				
+				System.out.println(123);
+				HttpResponse response=client.execute(httpPost);
+				System.out.println(456);
+				StatusLine statusLine=response.getStatusLine();
+				int status=statusLine.getStatusCode();
+				Log.d("DEBUG", "status="+status);
+				
+				if(status==200){
+					HttpEntity entity = response.getEntity();
+					InputStream content = entity.getContent();
+					BufferedReader reader = new BufferedReader(
+							new InputStreamReader(content));
+					String lv = "";
+					while ((lv = reader.readLine()) != null) {
+						strBuilder.append(lv);
+					}
+				}else {
+					String lv="4";
+					strBuilder.append(lv);
+				}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				Log.e("ERROR",e.toString());
 			}
+			
 
 			return true;
 		}
@@ -213,7 +252,8 @@ public class SignInActivity extends Activity {
 				// If sign in succeeded, go to the user path page
 				// Variable 'isSignedIn' defined in UserPathActivity changes
 				UserPageActivity.isSignedIn = true;
-				Intent intent = new Intent(SignInActivity.this, UserPageActivity.class);
+				Intent intent = new Intent(SignInActivity.this,
+						UserPageActivity.class);
 				startActivity(intent);
 				finish();
 			} else {

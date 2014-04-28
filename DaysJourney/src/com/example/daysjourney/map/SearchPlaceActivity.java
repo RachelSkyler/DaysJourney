@@ -39,8 +39,6 @@ public class SearchPlaceActivity extends Activity {
 	 */
 	GoogleMap mHomeMap;
 	SensorManager mSensorMngr;
-	boolean mCompassEnabled;
-	CompassView mCompassView;
 
 	private static final String TAG = "SearchPlaceActivityLog";
 
@@ -56,20 +54,9 @@ public class SearchPlaceActivity extends Activity {
 		this.mHomeMap = ((MapFragment) this.getFragmentManager()
 				.findFragmentById(R.id.fullscreen_map)).getMap();
 
-		boolean sideBottom = true;
-		this.mCompassView = new CompassView(this, sideBottom);
-		this.mCompassView.setVisibility(View.VISIBLE);
-		this.mCompassEnabled = true;
 
 		RelativeLayout fullscreenMapLayout = (RelativeLayout) this
 				.findViewById(R.id.fullscreen_map_layout);
-		final RelativeLayout.LayoutParams compassParams = new RelativeLayout.LayoutParams(
-				RelativeLayout.LayoutParams.WRAP_CONTENT,
-				RelativeLayout.LayoutParams.WRAP_CONTENT);
-		compassParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-		compassParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-		fullscreenMapLayout.addView(mCompassView, compassParams);
-
 		SearchPlaceActivity.this.startLocationService();
 
 		Button fullscreenMapSearchButton = (Button) this
@@ -168,7 +155,6 @@ public class SearchPlaceActivity extends Activity {
 		// TODO Auto-generated method stub
 		super.onPause();
 		this.mHomeMap.setMyLocationEnabled(false);
-		this.mCompassEnabled = false;
 	}
 
 	@Override
@@ -176,40 +162,25 @@ public class SearchPlaceActivity extends Activity {
 		// TODO Auto-generated method stub
 		super.onResume();
 		this.mHomeMap.setMyLocationEnabled(true);
-		if (this.mCompassEnabled) {
-			this.mSensorMngr.registerListener(mListener,
-					this.mSensorMngr.getDefaultSensor(Sensor.TYPE_ORIENTATION),
-					this.mSensorMngr.SENSOR_DELAY_UI);
-		}
+	}
+
+	@Override
+	protected void onStop() {
+		// TODO Auto-generated method stub
+		super.onStop();
+		this.mHomeMap.setMyLocationEnabled(false);
+	}
+
+	@Override
+	protected void onDestroy() {
+		// TODO Auto-generated method stub
+		super.onDestroy();
+		this.mHomeMap.setMyLocationEnabled(false);
 	}
 
 	@Override
 	protected void onPostCreate(Bundle savedInstanceState) {
 		super.onPostCreate(savedInstanceState);
 	}
-
-	private final SensorEventListener mListener = new SensorEventListener() {
-		private int iOrientation = -1;
-
-		@Override
-		public void onSensorChanged(SensorEvent event) {
-			// TODO Auto-generated method stub
-			if (this.iOrientation < 0) {
-				this.iOrientation = ((WindowManager) SearchPlaceActivity.this
-						.getSystemService(Context.WINDOW_SERVICE))
-						.getDefaultDisplay().getOrientation();
-				mCompassView.setAzimuth(event.values[0] + 90 * iOrientation);
-				mCompassView.invalidate();
-				Log.i(TAG, "New Azimuth --> " + event.values[0] + 90
-						* iOrientation);
-			}
-		}
-
-		@Override
-		public void onAccuracyChanged(Sensor sensor, int accuracy) {
-			// TODO Auto-generated method stub
-
-		}
-	};
 
 }

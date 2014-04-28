@@ -154,6 +154,7 @@ public class UserPageActivity extends ActionBarActivity {
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
 			int pageNum = getArguments().getInt(ARG_SECTION_NUMBER);
+			System.out.println(pageNum);
 			View rootView = null;
 			switch (pageNum) {
 			case 1:
