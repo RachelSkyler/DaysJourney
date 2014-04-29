@@ -2,30 +2,20 @@ package com.example.daysjourney.user;
 
 import java.util.Locale;
 
-import com.example.daysjourney.R;
-import com.example.daysjourney.R.id;
-import com.example.daysjourney.R.layout;
-import com.example.daysjourney.R.menu;
-import com.example.daysjourney.R.string;
-import com.example.daysjourney.common.MainActivity;
-
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.view.Gravity;
-import android.view.LayoutInflater;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.daysjourney.R;
+import com.example.daysjourney.common.MainActivity;
 
 /**
  * Activity for the user page. Whether user is signed in or not will be
@@ -68,10 +58,12 @@ public class UserPageActivity extends ActionBarActivity {
 		// sign in or sign up
 		// Simulation of signed in or signed out
 		if (!isSignedIn) {
+			System.out.println("Logged out... Go back...");
 			Intent intent = new Intent(UserPageActivity.this,
 					MainActivity.class);
 			startActivity(intent);
 			finish();
+			return;
 		}
 
 		setContentView(R.layout.activity_user_path_main);
@@ -84,6 +76,27 @@ public class UserPageActivity extends ActionBarActivity {
 		// Set up the ViewPager with the sections adapter
 		mViewPager = (ViewPager) findViewById(R.id.pager);
 		mViewPager.setAdapter(mSectionsPagerAdapter);
+		mViewPager.setOnPageChangeListener(new OnPageChangeListener() {
+			
+			@Override
+			public void onPageSelected(int position) {
+				// TODO Auto-generated method stub
+				System.out.println("POSITION --> "+position);
+				//mSectionsPagerAdapter.getItem(position);
+			}
+			
+			@Override
+			public void onPageScrolled(int arg0, float arg1, int arg2) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onPageScrollStateChanged(int arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 
 	}
 
@@ -102,7 +115,18 @@ public class UserPageActivity extends ActionBarActivity {
 			// getItem is called to instantiate the fragment for the given page
 			// Return a PlaceholderFragment (defined as a static inner class
 			// below)
-			return PlaceholderFragment.newInstance(position + 1);
+			switch (position) {
+			case 0:
+				return UserPathFragment.newInstance(position + 1);
+			case 1:
+				return EnvironmentInfoFragment.newInstance(position + 1);
+			case 2:
+				return EnvironmentControlFragment.newInstance(position + 1);
+
+			default:
+				return null;
+			}
+			
 		}
 
 		@Override
@@ -129,17 +153,18 @@ public class UserPageActivity extends ActionBarActivity {
 	/**
 	 * A placeholder fragment containing a simple view.
 	 */
-	public static class PlaceholderFragment extends Fragment {
-		/**
+	/*public static class PlaceholderFragment extends Fragment {
+		*//**
 		 * The fragment argument representing the section number for this
 		 * fragment.
-		 */
+		 *//*
 		private static final String ARG_SECTION_NUMBER = "section_number";
 
-		/**
+		*//**
 		 * Returns a new instance of this fragment for the given section number.
-		 */
+		 *//*
 		public static PlaceholderFragment newInstance(int sectionNumber) {
+			System.out.println("SECTIONNUM --> "+sectionNumber);
 			PlaceholderFragment fragment = new PlaceholderFragment();
 			Bundle args = new Bundle();
 			args.putInt(ARG_SECTION_NUMBER, sectionNumber);
@@ -154,7 +179,6 @@ public class UserPageActivity extends ActionBarActivity {
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
 			int pageNum = getArguments().getInt(ARG_SECTION_NUMBER);
-			System.out.println(pageNum);
 			View rootView = null;
 			switch (pageNum) {
 			case 1:
@@ -172,7 +196,7 @@ public class UserPageActivity extends ActionBarActivity {
 			}
 			return rootView;
 		}
-	}
+	}*/
 
 	private void showToastMsg(String msg) {
 		Toast.makeText(getApplication(), msg, Toast.LENGTH_LONG).show();
