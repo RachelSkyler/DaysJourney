@@ -1340,9 +1340,6 @@ containing a value of this type.
         public static final int activity_chooser_view_content=0x7f060028;
         public static final int always=0x7f06000f;
         public static final int beginning=0x7f060014;
-        public static final int btnConnect=0x7f060063;
-        public static final int btnContinuous=0x7f060061;
-        public static final int btnSingle=0x7f060060;
         public static final int checkbox=0x7f060030;
         public static final int collapseActionView=0x7f060011;
         public static final int default_activity_button=0x7f06002b;
@@ -1368,7 +1365,15 @@ containing a value of this type.
         public static final int icon=0x7f06002d;
         public static final int ifRoom=0x7f06000e;
         public static final int image=0x7f06002a;
-        public static final int linTemphumi=0x7f06005d;
+        public static final int insideGraph=0x7f06005c;
+        public static final int inside_brightness=0x7f06005f;
+        public static final int inside_busy_progressbar=0x7f060062;
+        public static final int inside_connect_button=0x7f060063;
+        public static final int inside_continuous_button=0x7f060061;
+        public static final int inside_result=0x7f060064;
+        public static final int inside_single_button=0x7f060060;
+        public static final int inside_temp=0x7f06005e;
+        public static final int line_temp_light=0x7f06005d;
         public static final int listMode=0x7f060005;
         public static final int list_item=0x7f06002c;
         public static final int middle=0x7f060015;
@@ -1378,7 +1383,6 @@ containing a value of this type.
         public static final int pager=0x7f06005a;
         public static final int password=0x7f060051;
         public static final int password_confirm=0x7f060058;
-        public static final int pbBusy=0x7f060062;
         public static final int progress_circular=0x7f06001b;
         public static final int progress_horizontal=0x7f06001c;
         public static final int radio=0x7f060032;
@@ -1417,13 +1421,9 @@ containing a value of this type.
         public static final int split_action_bar=0x7f060021;
         public static final int submit_area=0x7f06003c;
         public static final int tabMode=0x7f060006;
-        public static final int tempGraph=0x7f06005c;
         public static final int terrain=0x7f060003;
         public static final int title=0x7f06002e;
         public static final int top_action_bar=0x7f060023;
-        public static final int tvHumi=0x7f06005f;
-        public static final int tvResult=0x7f060064;
-        public static final int tvTemp=0x7f06005e;
         public static final int up=0x7f060024;
         public static final int useLogo=0x7f060007;
         public static final int user_path_add_place_button=0x7f060068;
@@ -1494,7 +1494,7 @@ containing a value of this type.
         public static final int activity_splash_screen=0x7f03001e;
         public static final int activity_user_path_main=0x7f03001f;
         public static final int fragment_environment_control=0x7f030020;
-        public static final int fragment_environment_info=0x7f030021;
+        public static final int fragment_environment_inside_info=0x7f030021;
         public static final int fragment_user_path=0x7f030022;
         public static final int support_simple_spinner_dropdown_item=0x7f030023;
     }
@@ -1670,6 +1670,13 @@ containing a value of this type.
         public static final int prompt_search_place=0x7f07003a;
         public static final int sign_in_progress=0x7f070040;
         public static final int sign_up_progress=0x7f070047;
+        public static final int text_inside_connect_button=0x7f070051;
+        public static final int text_inside_continuous_button=0x7f07004f;
+        public static final int text_inside_scan_button=0x7f070050;
+        /**  Strings related to inside home data info 
+         */
+        public static final int text_inside_single_button=0x7f07004d;
+        public static final int text_inside_stop_button=0x7f07004e;
         /**  Strings related to destination registration 
          */
         public static final int text_my_home_location=0x7f070038;

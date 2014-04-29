@@ -1,0 +1,11 @@
+<resources>
+    
+    <!-- Strings related to inside home data info -->
+    
+    <string name="text_inside_single_button">Single</string>
+    <string name="text_inside_stop_button">Stop</string>
+    <string name="text_inside_continuous_button">Continuous</string>
+    <string name="text_inside_scan_button">Scan</string>
+    <string name="text_inside_connect_button">Connect</string>
+
+</resources>

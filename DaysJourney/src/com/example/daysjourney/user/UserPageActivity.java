@@ -76,27 +76,6 @@ public class UserPageActivity extends ActionBarActivity {
 		// Set up the ViewPager with the sections adapter
 		mViewPager = (ViewPager) findViewById(R.id.pager);
 		mViewPager.setAdapter(mSectionsPagerAdapter);
-		mViewPager.setOnPageChangeListener(new OnPageChangeListener() {
-			
-			@Override
-			public void onPageSelected(int position) {
-				// TODO Auto-generated method stub
-				System.out.println("POSITION --> "+position);
-				//mSectionsPagerAdapter.getItem(position);
-			}
-			
-			@Override
-			public void onPageScrolled(int arg0, float arg1, int arg2) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void onPageScrollStateChanged(int arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-		});
 
 	}
 
@@ -119,7 +98,7 @@ public class UserPageActivity extends ActionBarActivity {
 			case 0:
 				return UserPathFragment.newInstance(position + 1);
 			case 1:
-				return EnvironmentInfoFragment.newInstance(position + 1);
+				return EnvironmentInsideInfoFragment.newInstance(position + 1);
 			case 2:
 				return EnvironmentControlFragment.newInstance(position + 1);
 
@@ -128,7 +107,12 @@ public class UserPageActivity extends ActionBarActivity {
 			}
 			
 		}
-
+		
+		/*
+		 * The total page number of fragments
+		 * (non-Javadoc)
+		 * @see android.support.v4.view.PagerAdapter#getCount()
+		 */
 		@Override
 		public int getCount() {
 			// Show 3 total pages
@@ -148,58 +132,6 @@ public class UserPageActivity extends ActionBarActivity {
 			}
 			return null;
 		}
-	}
-
-	/**
-	 * A placeholder fragment containing a simple view.
-	 */
-	/*public static class PlaceholderFragment extends Fragment {
-		*//**
-		 * The fragment argument representing the section number for this
-		 * fragment.
-		 *//*
-		private static final String ARG_SECTION_NUMBER = "section_number";
-
-		*//**
-		 * Returns a new instance of this fragment for the given section number.
-		 *//*
-		public static PlaceholderFragment newInstance(int sectionNumber) {
-			System.out.println("SECTIONNUM --> "+sectionNumber);
-			PlaceholderFragment fragment = new PlaceholderFragment();
-			Bundle args = new Bundle();
-			args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-			fragment.setArguments(args);
-			return fragment;
-		}
-
-		public PlaceholderFragment() {
-		}
-
-		@Override
-		public View onCreateView(LayoutInflater inflater, ViewGroup container,
-				Bundle savedInstanceState) {
-			int pageNum = getArguments().getInt(ARG_SECTION_NUMBER);
-			View rootView = null;
-			switch (pageNum) {
-			case 1:
-				rootView = inflater.inflate(R.layout.activity_user_path,
-						container, false);
-				break;
-			case 2:
-				rootView = inflater.inflate(R.layout.activity_environment_info,
-						container, false);
-			case 3:
-				rootView = inflater.inflate(R.layout.activity_environment_control,
-						container, false);
-			default:
-				break;
-			}
-			return rootView;
-		}
-	}*/
-
-	private void showToastMsg(String msg) {
-		Toast.makeText(getApplication(), msg, Toast.LENGTH_LONG).show();
 	}
 
 	@Override

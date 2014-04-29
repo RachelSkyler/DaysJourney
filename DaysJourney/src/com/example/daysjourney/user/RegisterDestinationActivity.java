@@ -100,7 +100,7 @@ public class RegisterDestinationActivity extends Activity {
 				Double longitude = lastLocation.getLongitude();
 				String msg = "Your Current Location \nLatitude: "+lastLocation.getLatitude()+", Longitude: "+lastLocation.getLongitude();
 				Log.i(TAG, msg);
-				this.showToastMsg(msg);
+				//this.showToastMsg(msg);
 				this.showCurrentLocation(latitude, longitude);
 			}
 		}catch(Exception e){
@@ -126,7 +126,7 @@ public class RegisterDestinationActivity extends Activity {
 			Double longitude = location.getLongitude();
 			String msg = "Your Current Location \nLatitude: "+latitude+", Longitude: "+longitude;
 			Log.i(TAG, msg);
-			RegisterDestinationActivity.this.showToastMsg(msg);
+			//RegisterDestinationActivity.this.showToastMsg(msg);
 			
 			showCurrentLocation(latitude, longitude);
 		}

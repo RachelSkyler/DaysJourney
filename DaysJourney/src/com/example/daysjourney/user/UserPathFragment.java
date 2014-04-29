@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.example.daysjourney.R;
 
@@ -22,7 +21,10 @@ import com.example.daysjourney.R;
  *
  */
 public class UserPathFragment extends Fragment{
-
+	
+	Button userPathHomeButtonTop;
+	Button userPathAddPlaceBotton;
+	Button userPathHomeButtonBottom;
 
 	private class ButtonClickHandler implements OnClickListener {
 
@@ -33,17 +35,18 @@ public class UserPathFragment extends Fragment{
 			Intent intent = null;
 			switch (buttonId) {
 			case R.id.user_path_home_button_top:
-				
+				intent = new Intent(getActivity(), RegisterHomeActivity.class);
 				break;
 			case R.id.user_path_home_button_bottom:
-				
+				intent = new Intent(getActivity(), RegisterHomeActivity.class);
 				break;
 			case R.id.user_path_add_place_button:
-				
+				intent = new Intent(getActivity(), RegisterDestinationActivity.class);
 				break;
 			default:
 				break;
 			}
+			startActivity(intent);
 		}
 
 	}
@@ -53,6 +56,14 @@ public class UserPathFragment extends Fragment{
 			Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		View view = inflater.inflate(R.layout.fragment_user_path, container, false);
+		
+		userPathHomeButtonTop = (Button) view.findViewById(R.id.user_path_home_button_top);
+		userPathAddPlaceBotton = (Button) view.findViewById(R.id.user_path_add_place_button);
+		userPathHomeButtonBottom = (Button) view.findViewById(R.id.user_path_home_button_bottom);
+		
+		userPathHomeButtonTop.setOnClickListener(new ButtonClickHandler());
+		userPathAddPlaceBotton.setOnClickListener(new ButtonClickHandler());
+		userPathHomeButtonBottom.setOnClickListener(new ButtonClickHandler());
 		
 		return view;
 	}
