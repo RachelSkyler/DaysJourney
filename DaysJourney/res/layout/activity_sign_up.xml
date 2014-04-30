@@ -30,9 +30,9 @@
             android:text="@string/sign_up_progress"
             android:textAppearance="?android:attr/textAppearanceMedium" />
     </LinearLayout>
-
+	
     <!-- Signup form -->
-
+	
     <ScrollView
         android:id="@+id/sign_up_form"
         android:layout_width="match_parent"
@@ -41,7 +41,30 @@
         <LinearLayout
             style="@style/SignupFormContainer"
             android:orientation="vertical" >
-
+			
+             <LinearLayout 
+		            android:orientation="horizontal"
+		            android:layout_width="match_parent"
+		            android:layout_height="0dp"
+		            android:layout_weight="90"
+		            >
+		            <TextView 
+		              	android:layout_width="match_parent"
+		                android:layout_height="match_parent"
+		                android:gravity="center_horizontal|center_vertical"
+		                android:text="@string/title"
+		                android:textColor="@color/dark_blue_color"
+		                android:textSize="18sp"/>
+		   	</LinearLayout>
+    	
+            <EditText
+                android:id="@+id/username"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/prompt_username"
+                android:maxLines="1"
+                android:singleLine="true" />
+            
             <EditText
                 android:id="@+id/email"
                 android:layout_width="match_parent"
@@ -50,7 +73,7 @@
                 android:inputType="textEmailAddress"
                 android:maxLines="1"
                 android:singleLine="true" />
-
+            
             <EditText
                 android:id="@+id/password"
                 android:layout_width="match_parent"
@@ -62,6 +85,7 @@
                 android:inputType="textPassword"
                 android:maxLines="1"
                 android:singleLine="true" />
+            
             <EditText
                 android:id="@+id/password_confirm"
                 android:layout_width="match_parent"
@@ -70,7 +94,7 @@
                 android:inputType="textPassword"
                 android:maxLines="1"
                 android:singleLine="true" />
-
+            
             <Button
                 android:id="@+id/sign_up_button"
                 android:layout_width="wrap_content"

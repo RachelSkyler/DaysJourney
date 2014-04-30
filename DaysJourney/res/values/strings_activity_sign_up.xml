@@ -4,6 +4,7 @@
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
     <string name="prompt_password_confirm">Password Confirmation</string>
+    <string name="prompt_username">Username</string>
     <string name="action_sign_up">Sign up</string>
     <string name="action_forgot_password">Recover lost password</string>
     <string name="sign_up_progress">Signing up&#8230;</string>
@@ -13,5 +14,5 @@
     <string name="error_incorrect_password_confirmation">This password confirmation should be the same with the password</string>
     <string name="error_already_exists">This email already exists.</string>
     <string name="error_sign_up_failed">The sign up failed. Please try again.</string>
-
+	<string name="title">Sign Up</string>
 </resources>
