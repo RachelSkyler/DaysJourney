@@ -100,7 +100,7 @@ public class UserPageActivity extends ActionBarActivity {
 			case 1:
 				return EnvironmentInsideInfoFragment.newInstance(position + 1);
 			case 2:
-				return EnvironmentControlFragment.newInstance(position + 1);
+				return EnvironmentOutsideInfoFragment.newInstance(position+1);
 
 			default:
 				return null;

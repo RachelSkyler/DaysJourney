@@ -35,11 +35,11 @@ import com.loopj.android.http.AsyncHttpResponseHandler;
  * information should be shown, and the sequence problem also should be solved.
  * 
  */
-public class EnvironmentInsideInfoFragment extends Fragment {
+public class EnvironmentOutsideInfoFragment extends Fragment {
 	// The constructor of the static fragment class
 	// with the position number defined in integer
-	public static EnvironmentInsideInfoFragment newInstance(int position) {
-		EnvironmentInsideInfoFragment frg = new EnvironmentInsideInfoFragment();
+	public static EnvironmentOutsideInfoFragment newInstance(int position) {
+		EnvironmentOutsideInfoFragment frg = new EnvironmentOutsideInfoFragment();
 		Bundle bundle = new Bundle();
 		bundle.putInt("position", position);
 		frg.setArguments(bundle);
@@ -48,12 +48,12 @@ public class EnvironmentInsideInfoFragment extends Fragment {
 
 	// Fetch continuous values
 	public static final int MSG_CONT = 100;
-	private static final String LOG = "EnvironmentInsideInfoFragment";
+	private static final String LOG = "EnvironmentOutsideInfoFragment";
 
-	TextView insideTemp, insideBrightness, insideResult;
-	Button insideSingleButton, insideContinuousButton, insideConnectButton;
-	ProgressBar insideBusyProgressBar;
-	LineGraph insideGraph;
+	TextView outsideTemp, outsideBrightness, outsideResult;
+	Button outsideSingleButton, outsideContinuousButton, outsideConnectButton;
+	ProgressBar outsideBusyProgressBar;
+	LineGraph outsideGraph;
 	Line lineTemp, lineBrightness;
 
 	boolean bOnline = false; // whether we are connected to Wifi or other networks
@@ -79,7 +79,7 @@ public class EnvironmentInsideInfoFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
-		view = inflater.inflate(R.layout.fragment_environment_inside_info,
+		view = inflater.inflate(R.layout.fragment_environment_outside_info,
 				container, false);
 
 		// setup
@@ -89,14 +89,14 @@ public class EnvironmentInsideInfoFragment extends Fragment {
 		prefs = getActivity().getSharedPreferences("prefs", 0);
 		setupVars();
 
-		insideSingleButton.setEnabled(false);
-		insideContinuousButton.setEnabled(false);
+		outsideSingleButton.setEnabled(false);
+		outsideContinuousButton.setEnabled(false);
 		if (bAutoscan) {
-			insideConnectButton.setText(R.string.text_inside_scan_button);
-			insideResult.setText("press to scan\n" + subnetUrl);
+			outsideConnectButton.setText(R.string.text_outside_scan_button);
+			outsideResult.setText("press to scan\n" + subnetUrl);
 		} else {
-			insideConnectButton.setText(R.string.text_inside_connect_button);
-			insideResult.setText("press to connect to\n" + exactUrl);
+			outsideConnectButton.setText(R.string.text_outside_connect_button);
+			outsideResult.setText("press to connect to\n" + exactUrl);
 		}
 
 		lineTemp = new Line();
@@ -106,18 +106,18 @@ public class EnvironmentInsideInfoFragment extends Fragment {
 		lineBrightness.setColor(Color.parseColor("#ffcc99"));
 		lineBrightness.setStrokeWidth(4);
 
-		insideGraph.addLine(lineTemp);
-		insideGraph.addLine(lineBrightness);
+		outsideGraph.addLine(lineTemp);
+		outsideGraph.addLine(lineBrightness);
 
-		insideGraph.setRangeY(0, 100);
-		insideGraph.addPoint(0, new LinePoint(0, 0));
-		insideGraph.addPoint(1, new LinePoint(0, 100));
+		outsideGraph.setRangeY(0, 100);
+		outsideGraph.addPoint(0, new LinePoint(0, 0));
+		outsideGraph.addPoint(1, new LinePoint(0, 100));
 		px = 1;
 
 		/*
 		 * Connect button clicked
 		 */
-		insideConnectButton.setOnClickListener(new OnClickListener() {
+		outsideConnectButton.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
@@ -126,13 +126,13 @@ public class EnvironmentInsideInfoFragment extends Fragment {
 					bNetworking = true;
 					pingFrom = 1;
 					pingTo = 100;
-					insideBusyProgressBar.setVisibility(View.VISIBLE);
-					insideConnectButton
-							.setText(R.string.text_inside_stop_button);
+					outsideBusyProgressBar.setVisibility(View.VISIBLE);
+					outsideConnectButton
+							.setText(R.string.text_outside_stop_button);
 					scanNet();
 				} else if (!bNetworking) {
-					insideBusyProgressBar.setVisibility(View.VISIBLE);
-					insideConnectButton.setEnabled(false);
+					outsideBusyProgressBar.setVisibility(View.VISIBLE);
+					outsideConnectButton.setEnabled(false);
 					connectUrl();
 				} else {
 					bNetworking = false;
@@ -142,7 +142,7 @@ public class EnvironmentInsideInfoFragment extends Fragment {
 		/*
 		 * Single button clicked
 		 */
-		insideSingleButton.setOnClickListener(new OnClickListener() {
+		outsideSingleButton.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
@@ -155,16 +155,16 @@ public class EnvironmentInsideInfoFragment extends Fragment {
 		/*
 		 * Continuous button clicked
 		 */
-		insideContinuousButton.setOnClickListener(new OnClickListener() {
+		outsideContinuousButton.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				if (bConnected & !bContinuous) {
 					bContinuous = true;
-					insideContinuousButton
-							.setText(R.string.text_inside_stop_button);
-					insideSingleButton.setEnabled(false);
+					outsideContinuousButton
+							.setText(R.string.text_outside_stop_button);
+					outsideSingleButton.setEnabled(false);
 					msg = new Message();
 					msg.what = MSG_CONT;
 					msg.arg1 = iContInterval;
@@ -183,15 +183,15 @@ public class EnvironmentInsideInfoFragment extends Fragment {
 		if (netClient == null)
 			return;
 		netClient.setTimeout(2000);
-		insideSingleButton.setEnabled(false);
+		outsideSingleButton.setEnabled(false);
 		netClient.get(exactUrl, new AsyncHttpResponseHandler() {
 
 			@Override
 			public void onFailure(Throwable arg0, String arg1) {
 				// TODO Auto-generated method stub
 				super.onFailure(arg0, arg1);
-				insideSingleButton.setEnabled(true);
-				insideResult.setText("ERROR fetching values");
+				outsideSingleButton.setEnabled(true);
+				outsideResult.setText("ERROR fetching values");
 			}
 
 			@Override
@@ -203,14 +203,14 @@ public class EnvironmentInsideInfoFragment extends Fragment {
 					Log.i("FETCH", jsonObject.toString());
 					float cTemp = (float) jsonObject.getDouble("ctemp");
 					int brightness = (int) jsonObject.getInt("brightness");
-					insideTemp.setText(String.format("%.1f", cTemp));
-					insideBrightness.setText(String.format("%02d", brightness));
-					insideGraph.shiftPoint(0, new LinePoint(px, cTemp), 50);
-					insideGraph.shiftPoint(1, new LinePoint(px,
+					outsideTemp.setText(String.format("%.1f", cTemp));
+					outsideBrightness.setText(String.format("%02d", brightness));
+					outsideGraph.shiftPoint(0, new LinePoint(px, cTemp), 50);
+					outsideGraph.shiftPoint(1, new LinePoint(px,
 							brightness / 10), 50);
-					insideResult.setText("ACQUISITION n. " + px);
+					outsideResult.setText("ACQUISITION n. " + px);
 					px++;
-					insideSingleButton.setEnabled(true);
+					outsideSingleButton.setEnabled(true);
 				} catch (Exception e) {
 				}
 			}
@@ -226,7 +226,7 @@ public class EnvironmentInsideInfoFragment extends Fragment {
 		netClient.get(exactUrl, new AsyncHttpResponseHandler() {
 			@Override
 			public void onFailure(Throwable e, String response) {
-				insideResult.setText("ERROR fetching values");
+				outsideResult.setText("ERROR fetching values");
 			}
 
 			@Override
@@ -238,12 +238,12 @@ public class EnvironmentInsideInfoFragment extends Fragment {
 					Log.i("FETCHCONT", jsonObject.toString());
 					float cTemp = (float) jsonObject.getDouble("ctemp");
 					int brightness = (int) jsonObject.getInt("brightness");
-					insideTemp.setText(String.format("%.1f", cTemp));
-					insideBrightness.setText(String.format("%02d", brightness));
-					insideGraph.shiftPoint(0, new LinePoint(px, cTemp), 50);
-					insideGraph.shiftPoint(1, new LinePoint(px,
+					outsideTemp.setText(String.format("%.1f", cTemp));
+					outsideBrightness.setText(String.format("%02d", brightness));
+					outsideGraph.shiftPoint(0, new LinePoint(px, cTemp), 50);
+					outsideGraph.shiftPoint(1, new LinePoint(px,
 							brightness / 10), 50);
-					insideResult.setText("ACQUISITION n. " + px);
+					outsideResult.setText("ACQUISITION n. " + px);
 					px++;
 				} catch (Exception e) {
 				}
@@ -262,21 +262,21 @@ public class EnvironmentInsideInfoFragment extends Fragment {
 			public void onSuccess(String response) {
 				// result
 				bConnected = true;
-				insideResult.setText("CONNECTED Arduino at\n" + exactUrl);
-				insideSingleButton.setEnabled(true);
-				insideContinuousButton.setEnabled(true);
+				outsideResult.setText("CONNECTED Arduino at\n" + exactUrl);
+				outsideSingleButton.setEnabled(true);
+				outsideContinuousButton.setEnabled(true);
 				// indeterminate progress bar
-				insideBusyProgressBar.setVisibility(View.INVISIBLE);
+				outsideBusyProgressBar.setVisibility(View.INVISIBLE);
 			}
 
 			// callback called on failure : return
 			@Override
 			public void onFailure(Throwable e, String response) {
 				// result
-				insideResult.setText("NOT FOUND at address\n " + exactUrl);
+				outsideResult.setText("NOT FOUND at address\n " + exactUrl);
 				// indeterminate progress bar
-				insideBusyProgressBar.setVisibility(View.INVISIBLE);
-				insideConnectButton.setEnabled(true);
+				outsideBusyProgressBar.setVisibility(View.INVISIBLE);
+				outsideConnectButton.setEnabled(true);
 			}
 		});
 	}
@@ -285,7 +285,7 @@ public class EnvironmentInsideInfoFragment extends Fragment {
 		// TODO Auto-generated method stub
 		showToastMsg("SCANNET "+pingFrom);
 		pingUrl = subnetUrl.replace("*", Integer.toString(pingFrom));
-		insideConnectButton.setText(R.string.text_inside_stop_button);
+		outsideConnectButton.setText(R.string.text_outside_stop_button);
 		if(netClient == null) 
 			return;
 		netClient.setTimeout(iScanTimeout);
@@ -297,7 +297,7 @@ public class EnvironmentInsideInfoFragment extends Fragment {
 				// result
 				exactUrl = pingUrl;
 				showToastMsg("코넥트 성공!~~~"+exactUrl);
-				insideResult.setText("FOUND Arduino at\n" + exactUrl);
+				outsideResult.setText("FOUND Arduino at\n" + exactUrl);
 				// set preferences and status
 				SharedPreferences.Editor editor = prefs.edit();
 				editor.putBoolean("prefkey_autoscan", false);
@@ -306,28 +306,28 @@ public class EnvironmentInsideInfoFragment extends Fragment {
 				bAutoscan = false;
 				bNetworking = false;
 				// button and indeterminate progress bar
-				insideConnectButton.setText(R.string.text_inside_connect_button);
-				insideBusyProgressBar.setVisibility(View.INVISIBLE);
+				outsideConnectButton.setText(R.string.text_outside_connect_button);
+				outsideBusyProgressBar.setVisibility(View.INVISIBLE);
 			}
 
 			// callback called on failure : continue scanning
 			@Override
 			public void onFailure(Throwable e, String response) {
 				showToastMsg("SCANNET FAILURE");
-				insideResult.setText("SCANNING subnet address\n " + pingUrl);
+				outsideResult.setText("SCANNING subnet address\n " + pingUrl);
 				if (pingFrom < pingTo) {
 					pingFrom++;
 					if (bNetworking)
 						scanNet();
 					else {
 						// result
-						insideResult.setText("press to scan\n" + subnetUrl);
+						outsideResult.setText("press to scan\n" + subnetUrl);
 						// button and indeterminate progress bar
 						if (bAutoscan)
-							insideConnectButton.setText(R.string.text_inside_scan_button);
+							outsideConnectButton.setText(R.string.text_outside_scan_button);
 						else
-							insideConnectButton.setText(R.string.text_inside_connect_button);
-						insideBusyProgressBar.setVisibility(View.INVISIBLE);
+							outsideConnectButton.setText(R.string.text_outside_connect_button);
+						outsideBusyProgressBar.setVisibility(View.INVISIBLE);
 					}
 				}
 			}
@@ -348,9 +348,9 @@ public class EnvironmentInsideInfoFragment extends Fragment {
 							0);
 					timingHandler.sendMessageDelayed(msg, msg.arg1);
 				} else {
-					insideContinuousButton
-							.setText(R.string.text_inside_continuous_button);
-					insideSingleButton.setEnabled(true);
+					outsideContinuousButton
+							.setText(R.string.text_outside_continuous_button);
+					outsideSingleButton.setEnabled(true);
 				}
 				break;
 
@@ -371,10 +371,10 @@ public class EnvironmentInsideInfoFragment extends Fragment {
 			bFromPref = false;
 			setupVars();
 			if (bAutoscan)
-				insideConnectButton.setText(R.string.text_inside_scan_button);
+				outsideConnectButton.setText(R.string.text_outside_scan_button);
 			else
-				insideConnectButton
-						.setText(R.string.text_inside_connect_button);
+				outsideConnectButton
+						.setText(R.string.text_outside_connect_button);
 		}
 	}
 	
@@ -383,18 +383,18 @@ public class EnvironmentInsideInfoFragment extends Fragment {
 	}
 
 	private void getViews() {
-		insideGraph = (LineGraph) view.findViewById(R.id.insideGraph);
-		insideSingleButton = (Button) view
-				.findViewById(R.id.inside_single_button);
-		insideContinuousButton = (Button) view
-				.findViewById(R.id.inside_continuous_button);
-		insideConnectButton = (Button) view
-				.findViewById(R.id.inside_connect_button);
-		insideResult = (TextView) view.findViewById(R.id.inside_result);
-		insideTemp = (TextView) view.findViewById(R.id.inside_temp);
-		insideBrightness = (TextView) view.findViewById(R.id.inside_brightness);
-		insideBusyProgressBar = (ProgressBar) view
-				.findViewById(R.id.inside_busy_progressbar);
+		outsideGraph = (LineGraph) view.findViewById(R.id.outsideGraph);
+		outsideSingleButton = (Button) view
+				.findViewById(R.id.outside_single_button);
+		outsideContinuousButton = (Button) view
+				.findViewById(R.id.outside_continuous_button);
+		outsideConnectButton = (Button) view
+				.findViewById(R.id.outside_connect_button);
+		outsideResult = (TextView) view.findViewById(R.id.outside_result);
+		outsideTemp = (TextView) view.findViewById(R.id.outside_temp);
+		outsideBrightness = (TextView) view.findViewById(R.id.outside_brightness);
+		outsideBusyProgressBar = (ProgressBar) view
+				.findViewById(R.id.outside_busy_progressbar);
 	}
 
 	private boolean isNetworkPresent() {
@@ -415,7 +415,7 @@ public class EnvironmentInsideInfoFragment extends Fragment {
 		bAutoscan = prefs.getBoolean("prefkey_autoscan", true);
 		if (bOnline) {
 			// //////////////////////////////
-			subnetUrl = IpSubnet.getIpSubnet().getSubnet() + "/sensorData/insideHome/all";
+			subnetUrl = IpSubnet.getIpSubnet().getSubnet() + "/sensorData/outsideHome/all";
 		}
 
 	}

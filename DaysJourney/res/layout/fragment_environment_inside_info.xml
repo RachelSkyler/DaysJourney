@@ -49,7 +49,7 @@
             android:layout_weight="1"
             android:background="@drawable/boxred_leftround"
             android:gravity="center"
-            android:text="Hu"
+            android:text="LT"
             android:textSize="15dp" />
 
         <TextView
