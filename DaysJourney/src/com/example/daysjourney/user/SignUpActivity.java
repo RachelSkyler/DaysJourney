@@ -1,11 +1,5 @@
 package com.example.daysjourney.user;
 
-import com.example.daysjourney.R;
-import com.example.daysjourney.R.id;
-import com.example.daysjourney.R.layout;
-import com.example.daysjourney.R.menu;
-import com.example.daysjourney.R.string;
-
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
@@ -15,14 +9,15 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import com.example.daysjourney.R;
+import com.example.daysjourney.entity.User;
+import com.loopj.android.http.RequestParams;
 
 /**
  * Activity for user sign up.
@@ -30,7 +25,7 @@ import android.widget.TextView;
  * If not, show error icon to the user.
  * If sign up succeeds, go to the destination registering page for home registration
  */
-public class SignUpActivity extends Activity {
+public class SignUpActivity extends Activity implements View.OnClickListener {
 	/**
 	 * A dummy authentication store containing known user names and passwords.
 	 * Used for checking whether the user exists already.
@@ -43,50 +38,45 @@ public class SignUpActivity extends Activity {
 	/**
 	 * Keep track of the login task to ensure we can cancel it if requested.
 	 */
-	private UserLoginTask mAuthTask = null;
+	//private UserLoginTask mAuthTask = null;
 
 	// Values for email password and password confirmation at the time of the sign up attempt
-	private String mEmail;
-	private String mPassword;
-	private String mPasswordConfirm;
-
+	private EditText mUsernameView;
 	private EditText mEmailView;
 	private EditText mPasswordView;
 	private EditText mPasswordConfirmView;
 	private View mSignUpFormView;
 	private View mSignUpStatusView;
 	private TextView mSignUpStatusMessageView;
+	
+	private Button mBtnSignUp;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+		//requestWindowFeature(Window.FEATURE_NO_TITLE); Hide title bar.
 		setContentView(R.layout.activity_sign_up);
 
 		// Set up the sign up form
+		initResources();
+		initEvents(); 
+	}
+	
+	private void initResources() {
+		mUsernameView = (EditText) findViewById(R.id.username);
 		mEmailView = (EditText) findViewById(R.id.email);
 		mPasswordView = (EditText) findViewById(R.id.password);
 		mPasswordConfirmView = (EditText) findViewById(R.id.password_confirm);
-		mPasswordConfirmView
-				.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-					@Override
-					public boolean onEditorAction(TextView textView, int id,
-							KeyEvent keyEvent) {
-						if (id == R.id.sign_up || id == EditorInfo.IME_NULL) {
-							attemptSignUp();
-							return true;
-						}
-						return false;
-					}
-				});
-
+		
 		mSignUpFormView = findViewById(R.id.sign_up_form);
 		mSignUpStatusView = findViewById(R.id.sign_up_status);
 		mSignUpStatusMessageView = (TextView) findViewById(R.id.sign_up_status_message);
-
-		Button btn = (Button)findViewById(R.id.sign_up_button);
-		System.out.println(btn == null);
-		findViewById(R.id.sign_up_button).setOnClickListener(
+		
+		mBtnSignUp = (Button)findViewById(R.id.sign_up_button);
+	}
+	
+	private void initEvents() {
+		mBtnSignUp.setOnClickListener(
 				new View.OnClickListener() {
 					@Override
 					public void onClick(View view) {
@@ -94,86 +84,125 @@ public class SignUpActivity extends Activity {
 					}
 				});
 	}
-
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
 		getMenuInflater().inflate(R.menu.sign_up, menu);
 		return true;
 	}
-
+	
+	private String getEmail() {
+		return mEmailView.getText().toString();
+	}
+	
+	private String getPassword() {
+		return mPasswordView.getText().toString();
+	}
+	
+	private String getPasswordConfirm(){
+		return mPasswordConfirmView.getText().toString();
+	}
+	
+	private String getUsername(){
+		return mUsernameView.getText().toString();
+	}
+	
+	private boolean isEmailFormFilled() {
+		return !(getEmail().equals(""));
+	}
+	
+	private boolean isPasswordFormFilled() {
+		return !(getPassword().equals(""));
+	}
+	
+	private boolean isPasswordConfirmFormFilled() {
+		return !(getPasswordConfirm().equals(""));
+	}
+	
+	private boolean isPasswordConfirmCorrected() {
+		return getPassword().equals(getPasswordConfirm());
+	}
+	
+	private boolean isValidEmail() {
+		return android.util.Patterns.EMAIL_ADDRESS.matcher(getEmail()).matches();
+	}
+	
+	private boolean isValidPassword() {
+	    return getPassword().length() >= 4;
+	}
+	
+	@Override
+	public void onClick(View view) {
+		// TODO Auto-generated method stub
+		// Reset errors
+		mEmailView.setError(null);
+		mPasswordView.setError(null);
+		mPasswordConfirmView.setError(null);
+		
+		View focusView = null;
+		boolean cancel = false;
+		
+		switch(view.getId()) {
+		case R.id.sign_up_button:
+			if(!isEmailFormFilled()) {
+				mEmailView.setError(getString(R.string.error_field_required));
+				focusView = mEmailView;
+				cancel = true;
+			} else if(!isPasswordFormFilled()) {
+				mPasswordView.setError(getString(R.string.error_field_required));
+				focusView = mPasswordView;
+				cancel = true;
+			} else if(!isPasswordConfirmFormFilled()) {
+				mPasswordConfirmView.setError(getString(R.string.error_field_required));
+				focusView = mPasswordConfirmView;
+				cancel = true;
+			} else if(!isValidEmail()) {
+				mEmailView.setError(getString(R.string.error_invalid_email));
+				focusView = mEmailView;
+				cancel = true;
+			} else if(!isValidPassword()) {
+				mPasswordConfirmView.setError(getString(R.string.error_invalid_password));
+				focusView = mPasswordConfirmView;
+				cancel = true;
+			} else {
+				attemptSignUp();
+			}
+			
+			if (cancel) {
+				// There was an error; don't attempt sign up and focus the first
+				// form field with an error.
+				focusView.requestFocus();
+			}
+		}
+	}
+	
+	
 	/**
 	 * Attempts to sign up the account specified by the sign up form.
 	 * If there are form errors (invalid email, missing fields, etc.), the
 	 * errors are presented and no actual sign up attempt is made.
 	 */
 	public void attemptSignUp() {
-		if (mAuthTask != null) {
+		/*if (mAuthTask != null) {
 			return;
-		}
-
-		// Reset errors
-		mEmailView.setError(null);
-		mPasswordView.setError(null);
-		mPasswordConfirmView.setError(null);
+		}*/
 
 		// Store values at the time of the sign up attempt
-		mEmail = mEmailView.getText().toString();
-		mPassword = mPasswordView.getText().toString();
-		mPasswordConfirm = mPasswordConfirmView.getText().toString();
-
-		boolean cancel = false;
-		View focusView = null;
-
-		// Check for a valid email address
-		if (TextUtils.isEmpty(mEmail)) {
-			mEmailView.setError(getString(R.string.error_field_required));
-			focusView = mEmailView;
-			cancel = true;
-		} else if (!mEmail.contains("@")) {
-			mEmailView.setError(getString(R.string.error_invalid_email));
-			focusView = mEmailView;
-			cancel = true;
-		}
+		RequestParams params = new RequestParams();
+		params.put(User.EMAIL, getEmail());
+		params.put(User.PASSWORD, getPassword());
+		params.put(User.USER_NAME, getUsername());
+				
+		// Show a progress spinner, and kick off a background task to
+		// perform the user login attempt.
+		mSignUpStatusMessageView.setText(R.string.sign_up_progress);
+		showProgress(true);
 		
-		// Check for a valid password
-		if (TextUtils.isEmpty(mPassword)) {
-			mPasswordView.setError(getString(R.string.error_field_required));
-			focusView = mPasswordView;
-			cancel = true;
-		} else if (mPassword.length() < 4) {
-			mPasswordView.setError(getString(R.string.error_invalid_password));
-			focusView = mPasswordView;
-			cancel = true;
-		}
 		
-		// Check for a valid password confirmation
-		if(TextUtils.isEmpty(mPasswordConfirm)){
-			mPasswordConfirmView.setError(getString(R.string.error_field_required));
-			focusView = mPasswordConfirmView;
-			cancel = true;
-		}else if(mPasswordConfirm.length() < 4){
-			mPasswordConfirmView.setError(getString(R.string.error_invalid_password));
-			focusView = mPasswordConfirmView;
-			cancel = true;
-		}else if(!TextUtils.equals(mPassword, mPasswordConfirm)){
-			mPasswordConfirmView.setError(getString(R.string.error_incorrect_password_confirmation));
-			focusView = mPasswordConfirmView;
-			cancel = true;
-		}
-
-		if (cancel) {
-			// There was an error; don't attempt sign up and focus the first
-			// form field with an error.
-			focusView.requestFocus();
-		} else {
-			// Show a progress spinner, and kick off a background task to
-			// perform the user login attempt.
-			mSignUpStatusMessageView.setText(R.string.sign_up_progress);
-			showProgress(true);
-			mAuthTask = new UserLoginTask();
-			mAuthTask.execute((Void) null);
-		}
+		//mAuthTask = new UserLoginTask();
+		//mAuthTask.execute((Void) null);
+		
 	}
 
 	/**
@@ -221,7 +250,7 @@ public class SignUpActivity extends Activity {
 	 * Represents an asynchronous sign up task used to authenticate
 	 * the user.
 	 */
-	public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
+	/*public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 		@Override
 		protected Boolean doInBackground(Void... params) {
 			
@@ -274,5 +303,7 @@ public class SignUpActivity extends Activity {
 			mAuthTask = null;
 			showProgress(false);
 		}
-	}
+	}*/
+
+	
 }
