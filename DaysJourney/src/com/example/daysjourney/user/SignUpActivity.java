@@ -1,14 +1,16 @@
 package com.example.daysjourney.user;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.json.JSONObject;
+
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
@@ -17,6 +19,9 @@ import android.widget.TextView;
 
 import com.example.daysjourney.R;
 import com.example.daysjourney.entity.User;
+import com.example.daysjourney.network.APIResponseHandler;
+import com.example.daysjourney.network.HttpUtil;
+import com.example.daysjourney.network.URL;
 import com.loopj.android.http.RequestParams;
 
 /**
@@ -129,7 +134,7 @@ public class SignUpActivity extends Activity implements View.OnClickListener {
 	}
 	
 	private boolean isValidPassword() {
-	    return getPassword().length() >= 4;
+	    return getPassword().length() >= 4  && getPassword().length() <= 128;
 	}
 	
 	@Override
@@ -184,6 +189,7 @@ public class SignUpActivity extends Activity implements View.OnClickListener {
 	 * errors are presented and no actual sign up attempt is made.
 	 */
 	public void attemptSignUp() {
+		String url = URL.SIGN_UP;
 		/*if (mAuthTask != null) {
 			return;
 		}*/
@@ -193,13 +199,37 @@ public class SignUpActivity extends Activity implements View.OnClickListener {
 		params.put(User.EMAIL, getEmail());
 		params.put(User.PASSWORD, getPassword());
 		params.put(User.USER_NAME, getUsername());
-				
-		// Show a progress spinner, and kick off a background task to
-		// perform the user login attempt.
-		mSignUpStatusMessageView.setText(R.string.sign_up_progress);
-		showProgress(true);
+	
+		Map<String, String> headers = new HashMap<String, String>();
+		headers.put("Accept", "application/json");
+		headers.put("Content-type", "application/json");
 		
-		
+		HttpUtil.post(url, headers, params, new APIResponseHandler(SignUpActivity.this){
+
+			@Override
+			public void onFinish() {
+				super.onFinish();
+				// Show a progress spinner, and kick off a background task to
+				// perform the user login attempt.
+				mSignUpStatusMessageView.setText(R.string.sign_up_progress);
+				showProgress(true);
+				//TODO: if view loading layout is made, then implement this method.
+				//showLoading(); 
+			}
+
+			@Override
+			public void onStart() {
+				super.onStart();
+				//hideLoading();
+			}
+
+			@Override
+			public void onSuccess(JSONObject response) {
+				setResult(Activity.RESULT_OK);
+				finish();
+			}
+			
+		}); 
 		//mAuthTask = new UserLoginTask();
 		//mAuthTask.execute((Void) null);
 		
