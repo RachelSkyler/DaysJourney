@@ -50,6 +50,7 @@ import com.example.daysjourney.util.IpSubnet;
 import com.example.daysjourney.util.UrlSource;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
 /**
  * Activity for the user path page. User can set home information and the places
@@ -283,7 +284,10 @@ public class EnvironmentInsideInfoFragment extends Fragment {
 
 	protected void fetchValues() {
 		// TODO Auto-generated method stub
-		if (netClient == null)
+		/*
+		 * AoA Data connection
+		 */
+		/*if (netClient == null)
 			return;
 		netClient.setTimeout(2000);
 		insideSingleButton.setEnabled(false);
@@ -318,7 +322,32 @@ public class EnvironmentInsideInfoFragment extends Fragment {
 				}
 			}
 
+		});*/
+		
+		/*
+		 * Data connection through ioedata
+		 */
+		if (netClient == null)
+			return;
+		netClient.setTimeout(2000);
+		insideSingleButton.setEnabled(false);
+		
+		String requestUrl = new UrlSource().getUrlRoot() + "datarequest.iotweb";
+		RequestParams params = new RequestParams();
+		params.put("ip", subnetIPString);
+		params.put("id", "abc");
+		params.put("method", "single");
+		netClient.post(requestUrl, params, new AsyncHttpResponseHandler(){
+
+			@Override
+			public void onSuccess(String content) {
+				// TODO Auto-generated method stub
+				
+			}
+			
 		});
+		
+		
 	}
 
 	protected void fetchContValues() {
@@ -405,6 +434,7 @@ public class EnvironmentInsideInfoFragment extends Fragment {
 
 	protected void connectUrl() {
 		// TODO Auto-generated method stub
+		
 		if (netClient == null)
 			return;
 
@@ -432,6 +462,7 @@ public class EnvironmentInsideInfoFragment extends Fragment {
 			}
 		});
 	}
+	
 
 	protected void scanNet() {
 		// TODO Auto-generated method stub
