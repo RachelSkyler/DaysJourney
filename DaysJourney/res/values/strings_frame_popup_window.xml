@@ -1,0 +1,10 @@
+<resources>
+    
+    <!-- Strings related to inside home data info -->
+    
+    <string name="text_popup_ip_address">IP Address</string>
+    <string name="text_popup_id">Hardware ID</string>
+    <string name="text_popup_password">Hardware Password</string>
+    <string name="text_popup_send_button">Send</string>
+
+</resources>

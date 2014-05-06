@@ -5,50 +5,69 @@
     android:layout_height="match_parent"
     tools:context="com.example.daysjourney.map.SearchPlaceActivity" >
 
-    <!--
-         TODO: Search a place using Place API
-    -->
+<!--          TODO: Search a place using Place API -->
 
-  <!--   <FrameLayout
+
+    <!--
+         <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="true" > -->
+        android:fitsSystemWindows="true" >
+    -->
 
-        <RelativeLayout
-            android:id="@+id/fullscreen_map_layout"
+    <RelativeLayout
+        android:id="@+id/fullscreen_map_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center" >
+
+        <fragment
+            android:id="@+id/fullscreen_map"
+            android:name="com.google.android.gms.maps.MapFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center" >
+            android:visibility="visible" >
+        </fragment>
+    </RelativeLayout>
 
-            <fragment
-                android:id="@+id/fullscreen_map"
-                android:name="com.google.android.gms.maps.MapFragment"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:visibility="visible" >
-            </fragment>
-        </RelativeLayout>
-        
-        <LinearLayout
-            android:layout_width="fill_parent"
+    <LinearLayout
+        android:id="@+id/full_screen_autocomplete_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_top"
+        android:orientation="horizontal" >
+
+        <AutoCompleteTextView
+            android:id="@+id/fullscreen_map_search_place_input"
+            android:layout_width="0dip"
             android:layout_height="wrap_content"
-            android:orientation="horizontal" >
+            android:layout_weight="1"
+            android:hint="@string/prompt_search_place"
+            android:textColor="#5D5D5D"
+            android:completionThreshold="3" />
 
-            <EditText
-                android:id="@+id/fullscreen_map_search_place_input"
-                android:layout_width="0dip"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:hint="@string/prompt_search_place"
-                android:maxLines="1"
-                android:singleLine="true" />
-
-            <Button
-                android:id="@+id/fullscreen_map_search_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/action_search_place" />
-        </LinearLayout>
-<!--     </FrameLayout> -->
+        <Button
+            android:id="@+id/fullscreen_map_confirm_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/action_confirm_place" />
+    </LinearLayout>
+    <!-- </FrameLayout> -->
 
 </FrameLayout>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

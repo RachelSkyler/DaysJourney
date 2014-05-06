@@ -44,7 +44,7 @@ public class SplashScreenActivity extends ActionBarActivity {
 				super.run();
 				try{
 					synchronized (this) {
-						wait(3000);
+						wait(1000);
 					}
 				}catch(Exception e){
 					
