@@ -3,7 +3,8 @@ package com.example.daysjourney.entity;
 import org.json.JSONObject;
 
 /**
- * Email을 아이디로.
+ * user_id 는 db 의 _id 값.
+ * 
  * 
  * 확실하지 않은 부분. => 암호화된 비밀번호가 토큰일까?
  * @author munkyusin
@@ -14,7 +15,7 @@ public class User {
 	public static final String USER_ID = "user_id"; 
 	public static final String EMAIL = "email";
 	public static final String PASSWORD = "password";
-	public static final String USER_NAME = "username";
+	public static final String USER_NAME = "user_name";
 	public static final String ENCRYPTED_PASSWORD = "encrypted_passeword";
 	
 	private int userId;

@@ -5,7 +5,7 @@ import com.example.daysjourney.core.App;
 
 
 public class URL {
-	public static final String BASE_URL_DEVELOPMENT = "http://127.0.0.1:3000";
+	public static final String BASE_URL_DEVELOPMENT = "http://192.168.0.8:3000";
 	//TODO 나중에 실서버에 올리면...
 	public static final String BASE_URL_PRODUCTION = "";
 	
@@ -17,7 +17,7 @@ public class URL {
 		}
 	}
 	
-	public static final String SIGN_UP = getBaseUrl() +"/users/sign_up";
+	public static final String SIGN_UP = getBaseUrl() +"/users";
 /**
  * public static final String BASE_URL_DEVELOPMENT = "http://54.199.171.240:3000";
 	public static final String BASE_URL_PRODUCTION = "http://vobbletestapi.cafe24app.com";

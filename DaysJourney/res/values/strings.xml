@@ -20,5 +20,11 @@
     <string name="title_section1">User Path</string>
     <string name="title_section2">Environment Information</string>
     <string name="title_section3">Environment Control</string>
-
+	
+    <!-- Error-message -->
+    <string name="error_cannot_connect_network">Can not connect network. Please try again.</string>
+    
+    <!--  -->
+    <string name="ok">Ok</string>
+    
 </resources>
