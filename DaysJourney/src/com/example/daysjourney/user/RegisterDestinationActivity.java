@@ -21,10 +21,12 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.daysjourney.R;
 import com.example.daysjourney.common.MainActivity;
+import com.example.daysjourney.map.GooglePlacesVO;
 import com.example.daysjourney.map.SearchPlaceActivity;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -46,6 +48,7 @@ public class RegisterDestinationActivity extends Activity implements View.OnClic
 	SensorManager mSensorMngr;
 	
 	Button mSearchLocationButton;
+	TextView myLocationTextView;
 
 	private static final String TAG = "RegisterDestinationActivityLog";
 
@@ -61,11 +64,18 @@ public class RegisterDestinationActivity extends Activity implements View.OnClic
 	
 	@SuppressLint("NewApi") 
 	private void initResources() {
+		this.myLocationTextView = (TextView) this.findViewById(R.id.text_my_location);
+
+		this.mSensorMngr = (SensorManager) this
+				.getSystemService(Context.SENSOR_SERVICE);
+
+		this.mDestinationMap = ((MapFragment) this.getFragmentManager()
+				.findFragmentById(R.id.destination_map)).getMap();
+		
 		RelativeLayout destinationMapLayout = (RelativeLayout) this
 				.findViewById(R.id.destination_map_layout);
 		this.mSensorMngr = (SensorManager) this.getSystemService(Context.SENSOR_SERVICE);
 		this.mDestinationMap = ((MapFragment) this.getFragmentManager().findFragmentById(R.id.destination_map)).getMap();
-		
 		mSearchLocationButton = (Button) this.findViewById(R.id.search_location_button);
 	}
 	
@@ -77,6 +87,26 @@ public class RegisterDestinationActivity extends Activity implements View.OnClic
 	public void onClick(View v) {
 		Intent intent = new Intent(RegisterDestinationActivity.this, SearchPlaceActivity.class);
 		startActivity(intent);
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// TODO Auto-generated method stub
+		super.onActivityResult(requestCode, resultCode, data);
+		if(resultCode ==RESULT_OK){
+			switch (requestCode) {
+			case 1:
+				Bundle bundle = data.getBundleExtra("placeInfo");
+				GooglePlacesVO placesVO = (GooglePlacesVO) bundle.getSerializable("placesVO");
+				String desc = placesVO.getDescription();
+				this.myLocationTextView.setText(desc.substring(0, desc.indexOf(",")));
+				this.showCurrentLocation(placesVO.getLatitude(), placesVO.getLongitude());
+				break;
+
+			default:
+				break;
+			}
+		}
 	}
 	
 	private void startLocationService() {

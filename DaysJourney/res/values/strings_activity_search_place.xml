@@ -2,6 +2,6 @@
     
     <!-- Strings related to sign in -->
     <string name="prompt_search_place">Place Your Want to Go</string>
-    <string name="action_search_place">Search</string>
+    <string name="action_confirm_place">Confirm</string>
 
 </resources>

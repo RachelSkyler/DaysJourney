@@ -4,83 +4,87 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background_color"
-    android:orientation="vertical"
-    android:gravity="center_horizontal" >
+    android:gravity="center_horizontal"
+    android:orientation="vertical" >
 
-    <!-- 
-    	Register my home location and my arduinos
-     -->
-    
+<!--     	Register my home location and my arduinos -->
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_top_narrow"
         android:text="@string/title_activity_register_home"
-        android:textStyle="bold"
-        android:textSize="30dp" />
-    
-    <TextView 
+        android:textSize="30dp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/text_my_home_location"
         android:layout_width="@dimen/text_view_width"
         android:layout_height="@dimen/text_view_height"
         android:layout_marginTop="@dimen/margin_top_narrow"
+        android:background="@color/dark_blue_color"
         android:gravity="center"
         android:text="@string/text_my_home_location"
-        android:textSize="20dp"
         android:textColor="@color/white_color"
-        android:background="@color/dark_blue_color"
-        />
-    <Button 
+        android:textSize="20dp" />
+
+    <Button
         android:id="@+id/search_home_location_button"
         android:layout_width="@dimen/text_view_width"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_top_super_narrow"
+        android:background="@color/sky_blue_color"
         android:gravity="center"
         android:text="@string/text_search"
         android:textSize="20dp"
-        android:background="@color/sky_blue_color"
-        android:visibility="visible"
-        />
-    
-    <RelativeLayout 
-	    android:id="@+id/home_map_layout"
-	    android:layout_width="match_parent"
-	    android:layout_height="200dp"
-    	android:gravity="center"
-        >
+        android:visibility="visible" />
+
+    <RelativeLayout
+        android:id="@+id/home_map_layout"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:gravity="center" >
+
         <fragment
-	        android:id="@+id/home_map"
-	        android:name="com.google.android.gms.maps.MapFragment"
-	        android:layout_width="match_parent"
-	        android:layout_height="200dp"
-	        
-	        android:layout_marginTop="@dimen/margin_top_super_narrow"
-	        android:visibility="visible"
-	        ></fragment>
+            android:id="@+id/home_map"
+            android:name="com.google.android.gms.maps.MapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:layout_marginTop="@dimen/margin_top_super_narrow"
+            android:visibility="visible" >
+        </fragment>
     </RelativeLayout>
-    
-    <Button 
-        android:id="@+id/search_my_arduino_button"
-        android:layout_width="@dimen/text_view_width"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_top_narrow"
-        android:gravity="center"
-        android:text="@string/text_search_my_arduino"
-        android:textSize="20dp"
-        android:textColor="@color/white_color"
-        android:background="@color/dark_blue_color"
-        />
-    <TextView 
-        android:id="@+id/show_my_home_arduino_list"
-        android:layout_width="@dimen/text_view_width"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_top_super_narrow"
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:gravity="center_horizontal"
-        />
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/search_my_inside_arduino_button"
+            android:layout_width="@dimen/button_width"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_top_narrow"
+            android:background="@color/dark_blue_color"
+            android:gravity="center"
+            android:text="@string/text_search_my_inside_arduino"
+            android:textColor="@color/white_color"
+            android:textSize="15dp" />
+        <Button
+            android:id="@+id/search_my_outside_arduino_button"
+            android:layout_width="@dimen/button_width"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_top_narrow"
+            android:layout_marginLeft="@dimen/margin_side"
+            android:background="@color/dark_blue_color"
+            android:gravity="center"
+            android:text="@string/text_search_my_outside_arduino"
+            android:textColor="@color/white_color"
+            android:textSize="15dp" />
+    </LinearLayout>
 
 </LinearLayout>
-
-
-
 
 
 
