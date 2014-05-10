@@ -8,7 +8,7 @@ public class App extends Application {
 	public static final int SERVER_PRODUCTION = 1;
 	public static final int SERVER_TARGET = SERVER_TEST;
 	
-    public static final String TAG = "VOBBLE";
+    public static final String TAG = "DaysJourney";
 	
 	//TODO Think whether there are more shared things or not.
 	

@@ -44,8 +44,9 @@ public class RegisterHomeActivity extends Activity {
 	/**
 	 * Member variables used for destination map in this activity.
 	 */
-	GoogleMap mHomeMap;
-	SensorManager mSensorMngr;
+	private GoogleMap mHomeMap;
+	private SensorManager mSensorMngr;
+	private Button mSearchLocationButton;
 	
 	private static final String TAG = "RegisterHomeActivityLog";
 
@@ -54,19 +55,21 @@ public class RegisterHomeActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_register_home);
-		
-		this.mSensorMngr = (SensorManager) this
-				.getSystemService(Context.SENSOR_SERVICE);
-
-		this.mHomeMap = ((MapFragment) this.getFragmentManager()
-				.findFragmentById(R.id.home_map)).getMap();
-
-
 		RegisterHomeActivity.this.startLocationService();
 
-		Button searchLocationButton = (Button) this
-				.findViewById(R.id.search_home_location_button);
-		searchLocationButton.setOnClickListener(new OnClickListener() {
+		initResource();
+		initEvent();
+	}
+	
+	@SuppressLint("NewApi") 
+	private void initResource(){
+		this.mSensorMngr = (SensorManager) this.getSystemService(Context.SENSOR_SERVICE);
+		this.mHomeMap = ((MapFragment) this.getFragmentManager().findFragmentById(R.id.home_map)).getMap();
+		mSearchLocationButton = (Button) this.findViewById(R.id.search_home_location_button);
+	}
+	
+	private void initEvent() {
+		mSearchLocationButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				// Go to the page for select a place
@@ -125,34 +128,22 @@ public class RegisterHomeActivity extends Activity {
 			String msg = "Your Current Location \nLatitude: "+latitude+", Longitude: "+longitude;
 			Log.i(TAG, msg);
 			//RegisterHomeActivity.this.showToastMsg(msg);
-			
 			showCurrentLocation(latitude, longitude);
 		}
 		
 		@Override
-		public void onStatusChanged(String provider, int status, Bundle extras) {
-			// TODO Auto-generated method stub
-
-		}
-
+		public void onStatusChanged(String provider, int status, Bundle extras) {}
+		
 		@Override
-		public void onProviderEnabled(String provider) {
-			// TODO Auto-generated method stub
-
-		}
-
+		public void onProviderEnabled(String provider) {}
+		
 		@Override
-		public void onProviderDisabled(String provider) {
-			// TODO Auto-generated method stub
-
-		}
-
+		public void onProviderDisabled(String provider) {}
 	}
 
 	private void showToastMsg(String msg) {
 		Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
 	}
-
 
 	@Override
 	protected void onPause() {
@@ -160,7 +151,6 @@ public class RegisterHomeActivity extends Activity {
 		super.onPause();
 		this.mHomeMap.setMyLocationEnabled(false);
 	}
-
 
 	@Override
 	protected void onStop() {
@@ -181,11 +171,9 @@ public class RegisterHomeActivity extends Activity {
 		super.onResume();
 		this.mHomeMap.setMyLocationEnabled(true);
 	}
-
 	
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-
+	public boolean onCreateOptionsMenu(Menu menu) { 
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.register_home, menu);
 		return true;
@@ -203,7 +191,6 @@ public class RegisterHomeActivity extends Activity {
 		return super.onOptionsItemSelected(item);
 	}
 	
-
 	private final SensorEventListener mListener=new SensorEventListener() {
 		private int iOrientation=-1;
 		
@@ -217,9 +204,5 @@ public class RegisterHomeActivity extends Activity {
 			// TODO Auto-generated method stub
 			
 		}
-	};
-
-
-
-
+	}; 
 }

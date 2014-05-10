@@ -22,7 +22,7 @@ public class AccountManager {
 		return accountManager;
 	}
 	
-	public void signin(Context context, User user) {
+	public void signIn(Context context, User user) {
 		//TODO call the methods such as setUserId(context, user.getUserId()+""); , setUsername, setEncryptedPassword
 		setUserId(context, user.getUserId() +"");
 		setUsername(context, user.getUsername());

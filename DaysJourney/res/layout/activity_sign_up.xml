@@ -52,7 +52,7 @@
 		              	android:layout_width="match_parent"
 		                android:layout_height="match_parent"
 		                android:gravity="center_horizontal|center_vertical"
-		                android:text="@string/title"
+		                android:text="@string/action_sign_up"
 		                android:textColor="@color/dark_blue_color"
 		                android:textSize="18sp"/>
 		   	</LinearLayout>

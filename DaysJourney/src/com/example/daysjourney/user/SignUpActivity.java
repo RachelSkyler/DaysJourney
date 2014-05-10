@@ -9,6 +9,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
@@ -190,9 +191,6 @@ public class SignUpActivity extends Activity implements View.OnClickListener {
 	 */
 	public void attemptSignUp() {
 		String url = URL.SIGN_UP;
-		/*if (mAuthTask != null) {
-			return;
-		}*/
 
 		// Store values at the time of the sign up attempt
 		RequestParams params = new RequestParams();
@@ -221,18 +219,21 @@ public class SignUpActivity extends Activity implements View.OnClickListener {
 			public void onStart() {
 				super.onStart();
 				//hideLoading();
+				
 			}
 
 			@Override
 			public void onSuccess(JSONObject response) {
 				setResult(Activity.RESULT_OK);
+				UserPageActivity.isSignedIn = true;
+				showProgress(false);
+				Intent intent = new Intent(SignUpActivity.this, RegisterHomeActivity.class);
+				intent.putExtra("email", getEmail());
+				startActivity(intent);
 				finish();
 			}
 			
 		}); 
-		//mAuthTask = new UserLoginTask();
-		//mAuthTask.execute((Void) null);
-		
 	}
 
 	/**
@@ -275,65 +276,4 @@ public class SignUpActivity extends Activity implements View.OnClickListener {
 			mSignUpFormView.setVisibility(show ? View.GONE : View.VISIBLE);
 		}
 	}
-
-	/**
-	 * Represents an asynchronous sign up task used to authenticate
-	 * the user.
-	 */
-	/*public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
-		@Override
-		protected Boolean doInBackground(Void... params) {
-			
-			// TODO: attempt authentication against a network service
-			try {
-				// Simulate network access
-				// Communicate with our server here
-				Thread.sleep(2000);
-			} catch (InterruptedException e) {
-				return false;
-			}
-			
-			// TODO: should check whether the email has already been signed up before
-			// In our project, we will get the information in JSON format
-			for (String credential : DUMMY_CREDENTIALS) {
-				String[] pieces = credential.split(":");
-				if (pieces[0].equals(mEmail)) {
-					// Account email exists, return true if the password matches
-					return pieces[1].equals(mPassword);
-				}
-			}
-
-			// TODO: register the new account here
-			return true;
-		}
-
-		@Override
-		protected void onPostExecute(final Boolean success) {
-			mAuthTask = null;
-			showProgress(false);
-
-			if (success) {
-				// TODO: Both sign UP and sign IN are supposed to be completed
-				// automatically and go to the user destination registration page
-				// TRANSACTION is needed 
-				UserPageActivity.isSignedIn = true;
-				Intent intent = new Intent(SignUpActivity.this, RegisterHomeActivity.class);
-				intent.putExtra("email", mEmail);
-				startActivity(intent);
-				finish();
-			} else {
-				mPasswordView
-						.setError(getString(R.string.error_sign_up_failed));
-				mPasswordView.requestFocus();
-			}
-		}
-
-		@Override
-		protected void onCancelled() {
-			mAuthTask = null;
-			showProgress(false);
-		}
-	}*/
-
-	
 }

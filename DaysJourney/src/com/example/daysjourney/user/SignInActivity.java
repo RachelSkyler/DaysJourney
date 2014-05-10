@@ -3,6 +3,8 @@ package com.example.daysjourney.user;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -10,6 +12,7 @@ import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONObject;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -19,33 +22,34 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.example.daysjourney.R;
+import com.example.daysjourney.common.MainActivity;
+import com.example.daysjourney.core.AccountManager;
+import com.example.daysjourney.entity.User;
+import com.example.daysjourney.network.APIResponseHandler;
+import com.example.daysjourney.network.HttpUtil;
+import com.example.daysjourney.network.URL;
 import com.example.daysjourney.util.UrlSource;
+import com.loopj.android.http.RequestParams;
 
 /**
  * Activity for user sign in page. Check whether all the required information
  * are filled. If not, show error icon to the user. If sign in succeeds, change
  * the static variable 'isSignedIn' in UserPathActivity to TRUE.
  */
-public class SignInActivity extends Activity {
+public class SignInActivity extends Activity implements View.OnClickListener{
 	/**
 	 * Keep track of the login task to ensure we can cancel it if requested.
 	 */
 	private UserLoginTask mAuthTask = null;
 
 	// Values for email and password at the time of the login attempt
-	private String mEmail;
-	private String mPassword;
-
 	private EditText mEmailView;
 	private EditText mPasswordView;
 	private View mLoginFormView;
@@ -57,81 +61,44 @@ public class SignInActivity extends Activity {
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.activity_sign_in);
-
-		// Set up the login form
+		
+		initResources();
+		initEvents();
+	}
+	
+	private void initResources() {
 		mEmailView = (EditText) findViewById(R.id.email);
 		mPasswordView = (EditText) findViewById(R.id.password);
-		mPasswordView
-				.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-					@Override
-					public boolean onEditorAction(TextView textView, int id,
-							KeyEvent keyEvent) {
-						if (id == R.id.sign_in || id == EditorInfo.IME_NULL) {
-							attemptLogin();
-							return true;
-						}
-						return false;
-					}
-				});
-
+		
 		mLoginFormView = findViewById(R.id.sign_in_form);
 		mLoginStatusView = findViewById(R.id.sign_in_status);
 		mLoginStatusMessageView = (TextView) findViewById(R.id.sign_in_status_message);
-
-		findViewById(R.id.sign_in_button).setOnClickListener(
-				new View.OnClickListener() {
-					@Override
-					public void onClick(View view) {
-						attemptLogin();
-					}
-				});
 	}
+	
+	private void initEvents(){
+		findViewById(R.id.sign_in_button).setOnClickListener(this);
+	}
+	
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		super.onCreateOptionsMenu(menu);
-		getMenuInflater().inflate(R.menu.sign_in, menu);
-		return true;
-	}
-
-	/**
-	 * Attempts to sign in the account specified by the login form. If there are
-	 * form errors (invalid email, missing fields, etc.), errors are presented
-	 * and no actual login attempt is made.
-	 */
-	public void attemptLogin() {
-		if (mAuthTask != null) {
-			return;
-		}
-
+	public void onClick(View v) {
 		// Reset errors
 		mEmailView.setError(null);
 		mPasswordView.setError(null);
-
-		// Store values at the time of the login attempt
-		mEmail = mEmailView.getText().toString();
-		mPassword = mPasswordView.getText().toString();
-
+		
 		boolean cancel = false;
 		View focusView = null;
 
-		// Check for a valid password
-		if (TextUtils.isEmpty(mPassword)) {
+		if (!isPasswordFormFilled()) {
 			mPasswordView.setError(getString(R.string.error_field_required));
 			focusView = mPasswordView;
 			cancel = true;
-		} else if (mPassword.length() < 4) {
-			mPasswordView.setError(getString(R.string.error_invalid_password));
-			focusView = mPasswordView;
-			cancel = true;
 		}
-
-		// Check for a valid email address
-		if (TextUtils.isEmpty(mEmail)) {
+		if (!isEmailFormFilled()) {
 			mEmailView.setError(getString(R.string.error_field_required));
 			focusView = mEmailView;
 			cancel = true;
-		} else if (!mEmail.contains("@")) {
+		} else if (!isValidEmail()) {
 			mEmailView.setError(getString(R.string.error_invalid_email));
 			focusView = mEmailView;
 			cancel = true;
@@ -145,50 +112,81 @@ public class SignInActivity extends Activity {
 			// Show a progress spinner, and start a background task to
 			// perform the user login attempt
 			mLoginStatusMessageView.setText(R.string.sign_in_progress);
-			showProgress(true);
-			mAuthTask = new UserLoginTask();
-			mAuthTask.execute((Void) null);
+			//mAuthTask = new UserLoginTask();
+			//mAuthTask.execute((Void) null);
+			
+			
 		}
+		attemptLogin();
 	}
-
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		super.onCreateOptionsMenu(menu);
+		getMenuInflater().inflate(R.menu.sign_in, menu);
+		return true;
+	}
+	
+	private String getPassword() {
+		return mPasswordView.getText().toString();
+	}
+	
+	private String getEmail() {
+		return mEmailView.getText().toString();
+	}
+	
+	private boolean isValidEmail() {
+		return android.util.Patterns.EMAIL_ADDRESS.matcher(getEmail()).matches();
+	}
+	
+	private boolean isEmailFormFilled() {
+		return !getEmail().equals("");
+	}
+	
+	private boolean isPasswordFormFilled() {
+		return !getPassword().equals("");
+	}
 	/**
-	 * Shows the progress UI and hides the login form.
+	 * Attempts to sign in the account specified by the login form. If there are
+	 * form errors (invalid email, missing fields, etc.), errors are presented
+	 * and no actual login attempt is made.
 	 */
-	@TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
-	private void showProgress(final boolean show) {
-		// On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
-		// for very easy animations
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-			int shortAnimTime = getResources().getInteger(
-					android.R.integer.config_shortAnimTime);
+	public void attemptLogin() {
+		String url = URL.SIGN_IN;
+		// Store values at the time of the login attempt
+		RequestParams params = new RequestParams();
+	    params.put(User.EMAIL, getEmail());
+	    params.put(User.PASSWORD, getPassword());
+	    
+	    Map<String, String> headers = new HashMap<String, String>();
+		headers.put("Accept", "application/json");
+		headers.put("Content-type", "application/json");
+		
+	    HttpUtil.post(url, null, params, new APIResponseHandler(SignInActivity.this) {
 
-			mLoginStatusView.setVisibility(View.VISIBLE);
-			mLoginStatusView.animate().setDuration(shortAnimTime)
-					.alpha(show ? 1 : 0)
-					.setListener(new AnimatorListenerAdapter() {
-						@Override
-						public void onAnimationEnd(Animator animation) {
-							mLoginStatusView.setVisibility(show ? View.VISIBLE
-									: View.GONE);
-						}
-					});
+            @Override
+            public void onStart() {
+                super.onStart();
+                showProgress(true);
+            }
 
-			mLoginFormView.setVisibility(View.VISIBLE);
-			mLoginFormView.animate().setDuration(shortAnimTime)
-					.alpha(show ? 0 : 1)
-					.setListener(new AnimatorListenerAdapter() {
-						@Override
-						public void onAnimationEnd(Animator animation) {
-							mLoginFormView.setVisibility(show ? View.GONE
-									: View.VISIBLE);
-						}
-					});
-		} else {
-			// The ViewPropertyAnimator APIs are not available, so simply show
-			// and hide the relevant UI components
-			mLoginStatusView.setVisibility(show ? View.VISIBLE : View.GONE);
-			mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-		}
+            @Override
+            public void onFinish() {
+                super.onFinish();
+                showProgress(false);
+            }
+
+            @Override
+            public void onSuccess(JSONObject response) {
+                AccountManager.getInstance().signIn(SignInActivity.this, User.build(response));
+
+                UserPageActivity.isSignedIn = true;
+				Intent intent = new Intent(SignInActivity.this, UserPageActivity.class);
+				startActivity(intent);
+				setResult(RESULT_OK, null);
+				finish();
+            }
+        });
 	}
 
 	/**
@@ -267,6 +265,47 @@ public class SignInActivity extends Activity {
 		protected void onCancelled() {
 			mAuthTask = null;
 			showProgress(false);
+		}
+	}
+	
+	
+	/**
+	 * Shows the progress UI and hides the login form.
+	 */
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
+	private void showProgress(final boolean show) {
+		// On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
+		// for very easy animations
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+			int shortAnimTime = getResources().getInteger(
+					android.R.integer.config_shortAnimTime);
+
+			mLoginStatusView.setVisibility(View.VISIBLE);
+			mLoginStatusView.animate().setDuration(shortAnimTime)
+					.alpha(show ? 1 : 0)
+					.setListener(new AnimatorListenerAdapter() {
+						@Override
+						public void onAnimationEnd(Animator animation) {
+							mLoginStatusView.setVisibility(show ? View.VISIBLE
+									: View.GONE);
+						}
+					});
+
+			mLoginFormView.setVisibility(View.VISIBLE);
+			mLoginFormView.animate().setDuration(shortAnimTime)
+					.alpha(show ? 0 : 1)
+					.setListener(new AnimatorListenerAdapter() {
+						@Override
+						public void onAnimationEnd(Animator animation) {
+							mLoginFormView.setVisibility(show ? View.GONE
+									: View.VISIBLE);
+						}
+					});
+		} else {
+			// The ViewPropertyAnimator APIs are not available, so simply show
+			// and hide the relevant UI components
+			mLoginStatusView.setVisibility(show ? View.VISIBLE : View.GONE);
+			mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
 		}
 	}
 }

@@ -37,48 +37,48 @@ import com.google.android.gms.maps.model.LatLng;
  * page will only get the user's email first, and get input of a location from
  * the user, then put it to the PATH table.
  */
-public class RegisterDestinationActivity extends Activity {
+public class RegisterDestinationActivity extends Activity implements View.OnClickListener {
 
 	/**
 	 * Member variables used for destination map in this activity.
 	 */
 	GoogleMap mDestinationMap;
 	SensorManager mSensorMngr;
+	
+	Button mSearchLocationButton;
 
 	private static final String TAG = "RegisterDestinationActivityLog";
 
-	@SuppressLint("NewApi")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_register_destination);
-
-		this.mSensorMngr = (SensorManager) this
-				.getSystemService(Context.SENSOR_SERVICE);
-
-		this.mDestinationMap = ((MapFragment) this.getFragmentManager()
-				.findFragmentById(R.id.destination_map)).getMap();
-
-
+		RegisterDestinationActivity.this.startLocationService();
+		
+		initResources();
+		initEvents();
+	}
+	
+	@SuppressLint("NewApi") 
+	private void initResources() {
 		RelativeLayout destinationMapLayout = (RelativeLayout) this
 				.findViewById(R.id.destination_map_layout);
+		this.mSensorMngr = (SensorManager) this.getSystemService(Context.SENSOR_SERVICE);
+		this.mDestinationMap = ((MapFragment) this.getFragmentManager().findFragmentById(R.id.destination_map)).getMap();
 		
-
-		RegisterDestinationActivity.this.startLocationService();
-
-		Button searchLocationButton = (Button) this
-				.findViewById(R.id.search_location_button);
-		searchLocationButton.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				// Go to the page for select a place
-				Intent intent = new Intent(RegisterDestinationActivity.this, SearchPlaceActivity.class);
-				startActivity(intent);
-			}
-		});
-
+		mSearchLocationButton = (Button) this.findViewById(R.id.search_location_button);
+	}
+	
+	private void initEvents() {
+		mSearchLocationButton.setOnClickListener(this);
 	}
 
+	@Override
+	public void onClick(View v) {
+		Intent intent = new Intent(RegisterDestinationActivity.this, SearchPlaceActivity.class);
+		startActivity(intent);
+	}
+	
 	private void startLocationService() {
 		// TODO Auto-generated method stub
 		LocationManager locationMngr = (LocationManager) this
@@ -204,7 +204,4 @@ public class RegisterDestinationActivity extends Activity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	
-
-
 }

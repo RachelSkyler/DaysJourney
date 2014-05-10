@@ -21,31 +21,13 @@ import android.widget.Button;
  * @author RachelSkyler
  *
  */
-public class MainActivity extends Activity {
-
-	public class ButtonClickHandler implements OnClickListener {
-
-		@Override
-		public void onClick(View v) {
-			int viewId = v.getId();
-			switch (viewId) {
-			case R.id.sign_in_page_button:
-				Intent intent1 = new Intent(MainActivity.this, SignInActivity.class);
-				startActivity(intent1);
-				break;
-
-			case R.id.sign_up_page_button:
-				Intent intent2 = new Intent(MainActivity.this, SignUpActivity.class);
-				startActivity(intent2);
-				break;
-
-			default:
-				break;
-			}
-		}
-
-	}
-
+public class MainActivity extends Activity implements View.OnClickListener{
+	public static final int REQUEST_SIGN_IN = 0;
+	public static final int REQUEST_SIGN_UP = 1;
+	
+	private Button mSignUpBtn;
+	private Button mSignInBtn;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -55,13 +37,58 @@ public class MainActivity extends Activity {
 			finish();
 		
 		setContentView(R.layout.activity_main_home);
+		
+		initResources();
+		initEvents();	
+	}
+	
+	private void initResources(){
+		mSignUpBtn = (Button) this.findViewById(R.id.sign_up_page_button);
+		mSignInBtn = (Button) this.findViewById(R.id.sign_in_page_button);
 
-		Button signUpBtn = (Button) this.findViewById(R.id.sign_up_page_button);
-		Button signInBtn = (Button) this.findViewById(R.id.sign_in_page_button);
+	}
+	
+	private void initEvents(){
+		mSignUpBtn.setOnClickListener(this);
+		mSignInBtn.setOnClickListener(this);
+	}
+	
+	@Override
+	public void onClick(View view) {
+		switch (view.getId()) {
+		case R.id.sign_in_page_button:
+			dispatchSignIn();
+			break;
 
-		signUpBtn.setOnClickListener(new ButtonClickHandler());
-		signInBtn.setOnClickListener(new ButtonClickHandler());
+		case R.id.sign_up_page_button:
+			dispatchSignUp();
+			break;
+		}
 	}
 
+	private void dispatchSignUp() {
+		Intent intent = new Intent(MainActivity.this, SignUpActivity.class);
+		startActivityForResult(intent, REQUEST_SIGN_UP);
+	}
 
+	private void dispatchSignIn() {
+		Intent intent = new Intent(MainActivity.this, SignInActivity.class);
+		startActivityForResult(intent, REQUEST_SIGN_IN);
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if(requestCode == REQUEST_SIGN_IN) {
+			if (resultCode == Activity.RESULT_OK) {
+				this.finish();
+			}
+		} else if (requestCode == REQUEST_SIGN_UP) {
+			if (resultCode == Activity.RESULT_OK) {
+				//dispatchSignIn();
+			}
+		}
+	}
+	
+	
 }

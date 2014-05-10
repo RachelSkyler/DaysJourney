@@ -5,7 +5,7 @@ import com.example.daysjourney.core.App;
 
 
 public class URL {
-	public static final String BASE_URL_DEVELOPMENT = "http://192.168.0.8:3000";
+	public static final String BASE_URL_DEVELOPMENT = "http://172.20.10.5:3000";
 	//TODO 나중에 실서버에 올리면...
 	public static final String BASE_URL_PRODUCTION = "";
 	
@@ -18,17 +18,10 @@ public class URL {
 	}
 	
 	public static final String SIGN_UP = getBaseUrl() +"/users";
-/**
- * public static final String BASE_URL_DEVELOPMENT = "http://54.199.171.240:3000";
-	public static final String BASE_URL_PRODUCTION = "http://vobbletestapi.cafe24app.com";
-	public static final String getBaseUrl() {
-		if(App.SERVER_TARGET == App.SERVER_TEST) {
-			return BASE_URL_DEVELOPMENT;
-		} else {
-			return BASE_URL_PRODUCTION;
-		}
-	}
+	
+	public static final String SIGN_IN = getBaseUrl() + "/users/sign_in";
 
+/**
 	기본 API를 기본으로 작성. 
     public static final String SIGN_UP = getBaseUrl() + "/users";
 	public static final String SIGN_IN = getBaseUrl() + "/tokens";
@@ -43,5 +36,5 @@ public class URL {
     public static final String EVENTS = getBaseUrl() + "/events";
     public static final String MORE_APPS = "http://teamnexters.com/apps";
  */
-
+	
 }

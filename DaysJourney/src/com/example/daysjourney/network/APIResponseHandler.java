@@ -36,6 +36,7 @@ public class APIResponseHandler extends JsonHttpResponseHandler {
 		String code = response.optString("result");
 		String message = response.optString("msg");
 		
+		System.out.println("result: "+code);
 		if(!TextUtils.isEmpty(code) && !CODE_SUCCESS.equals(code)) {	    	
 	    	AlertDialog.Builder builder = new AlertDialog.Builder(context);
 	        builder.setMessage(message + "(" + code + ")");
