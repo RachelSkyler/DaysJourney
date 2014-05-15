@@ -46,7 +46,7 @@ import com.example.daysjourney.R;
 import com.example.daysjourney.graph.Line;
 import com.example.daysjourney.graph.LineGraph;
 import com.example.daysjourney.graph.LinePoint;
-import com.example.daysjourney.util.IpSubnet;
+import com.example.daysjourney.network.IpSubnet;
 import com.example.daysjourney.util.UrlSource;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;

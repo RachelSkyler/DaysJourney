@@ -25,6 +25,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.view.Window;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -34,7 +35,7 @@ import com.example.daysjourney.core.AccountManager;
 import com.example.daysjourney.entity.User;
 import com.example.daysjourney.network.APIResponseHandler;
 import com.example.daysjourney.network.HttpUtil;
-import com.example.daysjourney.network.URL;
+import com.example.daysjourney.network.URLSource;
 import com.example.daysjourney.util.UrlSource;
 import com.loopj.android.http.RequestParams;
 
@@ -59,7 +60,7 @@ public class SignInActivity extends Activity implements View.OnClickListener{
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_sign_in);
 		
 		initResources();
@@ -114,10 +115,9 @@ public class SignInActivity extends Activity implements View.OnClickListener{
 			mLoginStatusMessageView.setText(R.string.sign_in_progress);
 			//mAuthTask = new UserLoginTask();
 			//mAuthTask.execute((Void) null);
-			
-			
+			attemptLogin();
 		}
-		attemptLogin();
+		
 	}
 	
 	@Override
@@ -152,7 +152,7 @@ public class SignInActivity extends Activity implements View.OnClickListener{
 	 * and no actual login attempt is made.
 	 */
 	public void attemptLogin() {
-		String url = URL.SIGN_IN;
+		String url = URLSource.SIGN_IN;
 		// Store values at the time of the login attempt
 		RequestParams params = new RequestParams();
 	    params.put(User.EMAIL, getEmail());

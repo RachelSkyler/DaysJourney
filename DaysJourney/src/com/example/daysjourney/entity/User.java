@@ -1,5 +1,6 @@
 package com.example.daysjourney.entity;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -13,12 +14,13 @@ import org.json.JSONObject;
 public class User {
 	
 	public static final String USER_ID = "user_id"; 
+	public static final String OBJECT_ID = "$oid";
 	public static final String EMAIL = "email";
 	public static final String PASSWORD = "password";
 	public static final String USER_NAME = "user_name";
 	public static final String ENCRYPTED_PASSWORD = "encrypted_passeword";
 	
-	private int userId;
+	private String userId;
 	private String email;
 	private String username;
 	private String encryptedPassword;
@@ -29,14 +31,21 @@ public class User {
 		}
 		
 		User user = new User();
-		user.userId = json.optInt(USER_ID);
+		JSONObject oid;
+		try {
+			oid = json.getJSONObject(USER_ID);
+			user.userId = oid.optString(OBJECT_ID);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		user.email = json.optString(EMAIL);
 		user.username = json.optString(USER_NAME);
 		user.encryptedPassword = json.optString(ENCRYPTED_PASSWORD);
 		return user;
 	}
 	
-	public int getUserId() {
+	public String getUserId() {
 		return userId;
 	}
 	

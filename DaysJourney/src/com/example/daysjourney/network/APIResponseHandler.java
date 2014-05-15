@@ -34,7 +34,7 @@ public class APIResponseHandler extends JsonHttpResponseHandler {
 	public void onSuccess(int statusCode, JSONObject response) {
 		App.log("HTTP  : " + response.toString());
 		String code = response.optString("result");
-		String message = response.optString("msg");
+		String message = response.optString("error");
 		
 		System.out.println("result: "+code);
 		if(!TextUtils.isEmpty(code) && !CODE_SUCCESS.equals(code)) {	    	
