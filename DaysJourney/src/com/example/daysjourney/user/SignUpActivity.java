@@ -19,10 +19,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.example.daysjourney.R;
+import com.example.daysjourney.core.AccountManager;
 import com.example.daysjourney.entity.User;
 import com.example.daysjourney.network.APIResponseHandler;
 import com.example.daysjourney.network.HttpUtil;
-import com.example.daysjourney.network.URL;
+import com.example.daysjourney.network.URLSource;
 import com.loopj.android.http.RequestParams;
 
 /**
@@ -190,7 +191,7 @@ public class SignUpActivity extends Activity implements View.OnClickListener {
 	 * errors are presented and no actual sign up attempt is made.
 	 */
 	public void attemptSignUp() {
-		String url = URL.SIGN_UP;
+		String url = URLSource.SIGN_UP;
 
 		// Store values at the time of the sign up attempt
 		RequestParams params = new RequestParams();
@@ -225,11 +226,9 @@ public class SignUpActivity extends Activity implements View.OnClickListener {
 			@Override
 			public void onSuccess(JSONObject response) {
 				setResult(Activity.RESULT_OK);
+				AccountManager.getInstance().signIn(SignUpActivity.this, User.build(response));
 				UserPageActivity.isSignedIn = true;
 				showProgress(false);
-				Intent intent = new Intent(SignUpActivity.this, RegisterHomeActivity.class);
-				intent.putExtra("email", getEmail());
-				startActivity(intent);
 				finish();
 			}
 			

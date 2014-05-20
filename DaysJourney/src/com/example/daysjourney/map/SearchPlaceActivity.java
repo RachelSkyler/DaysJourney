@@ -2,7 +2,6 @@ package com.example.daysjourney.map;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -27,20 +26,26 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.example.daysjourney.R;
+import com.example.daysjourney.entity.Destination;
+import com.example.daysjourney.entity.Path;
+import com.example.daysjourney.network.APIResponseHandler;
+import com.example.daysjourney.network.HttpUtil;
+import com.example.daysjourney.network.URLSource;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.loopj.android.http.RequestParams;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -53,11 +58,13 @@ public class SearchPlaceActivity extends Activity {
 	/**
 	 * Member variables used for destination map in this activity.
 	 */
-	GoogleMap mHomeMap;
-	SensorManager mSensorMngr;
+	private GoogleMap mHomeMap;
+	private SensorManager mSensorMngr;
 
-	AutoCompleteTextView mAutoPlace;
-	ArrayAdapter<String> mAdapter;
+	private AutoCompleteTextView mAutoPlace;
+	private ArrayAdapter<String> mAdapter;
+	
+	private Button mConfirmBtn; 
 
 	private static final String TAG = "SearchPlaceActivityLog";
 	private static final String API_KEY = "AIzaSyAPPleBgtffPbcRSUkfKu6V2DuV2cJJ5-4";
@@ -66,32 +73,38 @@ public class SearchPlaceActivity extends Activity {
 	private static final String GOOGLE_PLACES_API_OPTIONS = "&sensor=false&key="+API_KEY;
 	
 	// Values from Google API JSON that is returned
-	GooglePlacesVO placesVO;
-
+	private Destination destination;
+	
 	@SuppressLint("NewApi")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_search_place);
 
-		this.mSensorMngr = (SensorManager) this
-				.getSystemService(Context.SENSOR_SERVICE);
-
-		this.mHomeMap = ((MapFragment) this.getFragmentManager()
-				.findFragmentById(R.id.fullscreen_map)).getMap();
-
-		this.mAutoPlace = (AutoCompleteTextView) this
-				.findViewById(R.id.fullscreen_map_search_place_input);
-		this.mAdapter = new ArrayAdapter<String>(this,
-				android.R.layout.simple_dropdown_item_1line);
-		this.mAdapter.setNotifyOnChange(true);
-		this.mAutoPlace.setAdapter(mAdapter);
-		this.mAutoPlace.addTextChangedListener(new TextWatcher() {
+		initResources();
+		mAdapter.setNotifyOnChange(true);
+		mAutoPlace.setAdapter(mAdapter);
+		initEvent();
+		
+		SearchPlaceActivity.this.startLocationService();
+	}
+	
+	@SuppressLint("NewApi") 
+	private void initResources() {
+		mSensorMngr = (SensorManager) this.getSystemService(Context.SENSOR_SERVICE);
+		mHomeMap = ((MapFragment) this.getFragmentManager().findFragmentById(R.id.fullscreen_map)).getMap();
+		mAutoPlace = (AutoCompleteTextView) this.findViewById(R.id.fullscreen_map_search_place_input);
+		mAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_dropdown_item_1line);
+		
+		mConfirmBtn = (Button) this.findViewById(R.id.fullscreen_map_confirm_button);
+	}
+	
+	private void initEvent() {
+		mAutoPlace.addTextChangedListener(new TextWatcher() {
 
 			@Override
-			public void onTextChanged(CharSequence s, int start, int before,
-					int count) {
-				// TODO Auto-generated method stub
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
 				if (count % 3 == 1) {
 					mAdapter.clear();
 					AsyncGetPlaces asyncTask = new AsyncGetPlaces();
@@ -100,53 +113,77 @@ public class SearchPlaceActivity extends Activity {
 			}
 
 			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count,
-					int after) {
-				// TODO Auto-generated method stub
-
-			}
+			public void beforeTextChanged(CharSequence s, int start, int count,int after) {}
 
 			@Override
-			public void afterTextChanged(Editable s) {
-				// TODO Auto-generated method stub
-
-			}
+			public void afterTextChanged(Editable s) {}
 		});
 
-		Button confirmBtn = (Button) this.findViewById(R.id.fullscreen_map_confirm_button);
-		confirmBtn.setOnClickListener(new OnClickListener() {
+		
+		mConfirmBtn.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
+				executeCreatingDestination();
+			}
+		});
+	}
+	
+	private String checkPath() {
+        Intent intent = getIntent();
+        String todayPId = intent.getExtras().getString("todayPId");
+		return todayPId;
+    }
+	
+	private void executeCreatingDestination() {
+		if(destination == null) return;
+		
+		String url = String.format(URLSource.DESTINATIONS, checkPath());
+		
+		RequestParams params = new RequestParams();
+	    params.put(Destination.DESCRIPTION, destination.getDescription());
+	    params.put(Destination.REFERENCE, destination.getReference());
+	    params.put(Destination.LATITUDE, String.valueOf(destination.getLatitude()));
+	    params.put(Destination.LONGITUDE, String.valueOf(destination.getLongitude()));
+	    params.put("is_home", true);
+		
+        HttpUtil.post(url, null, params, new APIResponseHandler(SearchPlaceActivity.this) {
+
+            @Override
+            public void onStart() {
+                super.onStart();
+            }
+
+            @Override
+            public void onFinish() {
+                super.onFinish();
+            }
+
+            @Override
+            public void onSuccess(JSONObject response) {
 				//return to previous activity
 				Intent intent = new Intent();
 				Bundle bundle = new Bundle();
-				bundle.putSerializable("placesVO", placesVO);
+				bundle.putSerializable("destination", destination);
 				intent.putExtra("placeInfo", bundle);
 				setResult(RESULT_OK, intent);
 				finish();
-			}
-		});
-		
-		SearchPlaceActivity.this.startLocationService();
+            }
+        });
 		
 	}
-
-	private class AsyncGetPlaces extends
-			AsyncTask<String, Void, ArrayList<GooglePlacesVO>> {
+	
+	private class AsyncGetPlaces extends AsyncTask<String, Void, ArrayList<Destination>> {
 
 		@Override
-		protected ArrayList<GooglePlacesVO> doInBackground(String... params) {
-			// TODO Auto-generated method stub
+		protected ArrayList<Destination> doInBackground(String... params) {
 			Log.d(TAG, "doInBackground " + params[0]);
-			ArrayList<GooglePlacesVO> predictionList = new ArrayList<GooglePlacesVO>();
+			ArrayList<Destination> predictionList = new ArrayList<Destination>();
 			try {
 
 				URL googlePlaces = new java.net.URL(GOOGLE_PLACES_AUTO_ROOT
 						+ URLEncoder.encode(params[0].toString(), "UTF-8")
 						+ GOOGLE_PLACES_API_OPTIONS);
-				// Server Key: AIzaSyAPPleBgtffPbcRSUkfKu6V2DuV2cJJ5-4
-
+				
 				URLConnection connection = googlePlaces.openConnection();
 				BufferedReader br = new BufferedReader(new InputStreamReader(
 						connection.getInputStream()));
@@ -165,19 +202,17 @@ public class SearchPlaceActivity extends Activity {
 				for (int i = 0; i < jsonArr.length(); i++) {
 					JSONObject obj = (JSONObject) jsonArr.get(i);
 					
-					GooglePlacesVO plVO = new GooglePlacesVO();
+					Destination plVO = new Destination();
 					plVO.setDescription(obj.getString("description"));
-					plVO.setId(obj.getString("id"));
+					//plVO.setDestinationId(obj.getString("id"));
 					plVO.setReference(obj.getString("reference"));
 					
 					predictionList.add(plVO);
 				}
 
 			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			Log.d(TAG, predictionList.toString());
@@ -185,8 +220,7 @@ public class SearchPlaceActivity extends Activity {
 		}
 
 		@Override
-		protected void onPostExecute(final ArrayList<GooglePlacesVO> result) {
-			// TODO Auto-generated method stub
+		protected void onPostExecute(final ArrayList<Destination> result) {
 			Log.d(TAG, "onPostExecute : " + result.size());
 			super.onPostExecute(result);
 			mAdapter = new ArrayAdapter<String>(getBaseContext(),
@@ -194,8 +228,8 @@ public class SearchPlaceActivity extends Activity {
 			mAdapter.setNotifyOnChange(true);
 			mAutoPlace.setAdapter(mAdapter);
 
-			for (GooglePlacesVO googleObj : result) {
-				mAdapter.add(googleObj.getDescription());
+			for (Destination resDestination : result) {
+				mAdapter.add(resDestination.getDescription());
 				mAdapter.notifyDataSetChanged();
 			}
 			
@@ -204,26 +238,24 @@ public class SearchPlaceActivity extends Activity {
 				@Override
 				public void onItemClick(AdapterView<?> parent, View view,
 						int position, long id) {
-					// TODO Auto-generated method stub
-					placesVO = result.get(position);
-					String reference = placesVO.getReference();
+					destination = result.get(position);
+					String reference = destination.getReference();
 					
 					AsyncGetPlacesDetails detailsAsyncTask = new AsyncGetPlacesDetails();
 					detailsAsyncTask.execute(reference);
 					
-					Log.e(TAG, placesVO.getDescription()+" "+placesVO.getReference());
+					Log.e(TAG, destination.getDescription()+" "+destination.getReference());
 				}
 			});
-			Log.d(TAG,
-					"onPostExecute : autoCompleteAdapter" + mAdapter.getCount());
+			Log.d(TAG,"onPostExecute : autoCompleteAdapter" + mAdapter.getCount());
 		}
 
 	}
 
-	private class AsyncGetPlacesDetails extends AsyncTask<String, JSONObject, GooglePlacesVO>{
+	private class AsyncGetPlacesDetails extends AsyncTask<String, JSONObject, Destination>{
 
 		@Override
-		protected void onPostExecute(GooglePlacesVO result) {
+		protected void onPostExecute(Destination result) {
 			// TODO Auto-generated method stub
 			super.onPostExecute(result);
 			mHomeMap.setMyLocationEnabled(false);
@@ -242,8 +274,7 @@ public class SearchPlaceActivity extends Activity {
 		}
 
 		@Override
-		protected GooglePlacesVO doInBackground(String... params) {
-			// TODO Auto-generated method stub
+		protected Destination doInBackground(String... params) {
 			Log.d(TAG, params[0]);
 			
 			try {
@@ -265,8 +296,8 @@ public class SearchPlaceActivity extends Activity {
 				
 				JSONObject jsonObj = new JSONObject(strBuff.toString());
 				JSONObject locObj = jsonObj.getJSONObject("result").getJSONObject("geometry").getJSONObject("location");
-				placesVO.setLatitude(locObj.getDouble("lat"));
-				placesVO.setLongitude(locObj.getDouble("lng"));
+				destination.setLatitude(locObj.getDouble("lat"));
+				destination.setLongitude(locObj.getDouble("lng"));
 				
 				publishProgress(locObj);
 				
@@ -277,7 +308,7 @@ public class SearchPlaceActivity extends Activity {
 				e.printStackTrace();
 			}
 			
-			return placesVO;
+			return destination;
 		}
 		
 	}
@@ -297,16 +328,10 @@ public class SearchPlaceActivity extends Activity {
 				minTime, minDistance, gpsListener);
 
 		try {
-			Location lastLocation = locationMngr
+			Location location = locationMngr
 					.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-			if (lastLocation != null) {
-				Double latitude = lastLocation.getLatitude();
-				Double longitude = lastLocation.getLongitude();
-				String msg = "Your Current Location \nLatitude: " + latitude
-						+ ", Longitude: " + longitude;
-				Log.i(TAG, msg);
-				// this.showToastMsg(msg);
-				this.showCurrentLocation(latitude, longitude);
+			if (location != null) {
+				getLocation(location);
 			}
 		} catch (Exception e) {
 			String msg = "Failed to get current location. Please try later.";
@@ -321,39 +346,32 @@ public class SearchPlaceActivity extends Activity {
 		mHomeMap.animateCamera(CameraUpdateFactory.newLatLngZoom(curPoint, 15));
 		mHomeMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 	}
+	
+	private void getLocation(Location location) {
+		Double latitude = location.getLatitude();
+		Double longitude = location.getLongitude();
+		String msg = "Your Current Location \nLatitude: " + latitude
+				+ ", Longitude: " + longitude;
+		Log.i(TAG, msg);
+		
+		showCurrentLocation(latitude, longitude);
+	}
 
 	private class GPSListener implements LocationListener {
 
 		@Override
 		public void onLocationChanged(Location location) {
-			// TODO Auto-generated method stub
-			Double latitude = location.getLatitude();
-			Double longitude = location.getLongitude();
-			String msg = "Your Current Location \nLatitude: " + latitude
-					+ ", Longitude: " + longitude;
-			Log.i(TAG, msg);
-			// SearchPlaceActivity.this.showToastMsg(msg);
-
-			showCurrentLocation(latitude, longitude);
+			getLocation(location);
 		}
 
 		@Override
-		public void onStatusChanged(String provider, int status, Bundle extras) {
-			// TODO Auto-generated method stub
-
-		}
+		public void onStatusChanged(String provider, int status, Bundle extras) {}
 
 		@Override
-		public void onProviderEnabled(String provider) {
-			// TODO Auto-generated method stub
-
-		}
+		public void onProviderEnabled(String provider) {}
 
 		@Override
-		public void onProviderDisabled(String provider) {
-			// TODO Auto-generated method stub
-
-		}
+		public void onProviderDisabled(String provider) {}
 
 	}
 
@@ -370,21 +388,18 @@ public class SearchPlaceActivity extends Activity {
 
 	@Override
 	protected void onResume() {
-		// TODO Auto-generated method stub
 		super.onResume();
 		this.mHomeMap.setMyLocationEnabled(true);
 	}
 
 	@Override
 	protected void onStop() {
-		// TODO Auto-generated method stub
 		super.onStop();
 		this.mHomeMap.setMyLocationEnabled(false);
 	}
 
 	@Override
 	protected void onDestroy() {
-		// TODO Auto-generated method stub
 		super.onDestroy();
 		this.mHomeMap.setMyLocationEnabled(false);
 	}

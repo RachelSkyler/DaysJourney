@@ -3,6 +3,7 @@ package com.example.daysjourney.common;
 import com.example.daysjourney.R;
 import com.example.daysjourney.R.id;
 import com.example.daysjourney.R.layout;
+import com.example.daysjourney.user.RegisterHomeActivity;
 import com.example.daysjourney.user.SignInActivity;
 import com.example.daysjourney.user.SignUpActivity;
 import com.example.daysjourney.user.UserPageActivity;
@@ -24,6 +25,7 @@ import android.widget.Button;
 public class MainActivity extends Activity implements View.OnClickListener{
 	public static final int REQUEST_SIGN_IN = 0;
 	public static final int REQUEST_SIGN_UP = 1;
+	public static final int REQUEST_REGISTER_HOME = 2;
 	
 	private Button mSignUpBtn;
 	private Button mSignInBtn;
@@ -75,6 +77,12 @@ public class MainActivity extends Activity implements View.OnClickListener{
 		Intent intent = new Intent(MainActivity.this, SignInActivity.class);
 		startActivityForResult(intent, REQUEST_SIGN_IN);
 	}
+	
+	private void dispatchRegisterHome() {
+		Intent intent = new Intent(MainActivity.this, RegisterHomeActivity.class);
+		//intent.putExtra("email", getEmail());
+		startActivityForResult(intent, REQUEST_REGISTER_HOME);
+	}
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -85,8 +93,10 @@ public class MainActivity extends Activity implements View.OnClickListener{
 			}
 		} else if (requestCode == REQUEST_SIGN_UP) {
 			if (resultCode == Activity.RESULT_OK) {
-				//dispatchSignIn();
+				dispatchRegisterHome();
 			}
+		} else if (requestCode == REQUEST_SIGN_UP) {
+			
 		}
 	}
 	

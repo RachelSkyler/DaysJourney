@@ -15,17 +15,14 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.app.Fragment;
 import android.app.ActionBar.LayoutParams;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -40,20 +37,26 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
+import android.view.Window;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.PopupWindow;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.daysjourney.R;
+import com.example.daysjourney.common.MainActivity;
+import com.example.daysjourney.core.AccountManager;
+import com.example.daysjourney.entity.Destination;
+import com.example.daysjourney.entity.Path;
+import com.example.daysjourney.entity.User;
 import com.example.daysjourney.map.GooglePlacesVO;
 import com.example.daysjourney.map.SearchPlaceActivity;
-import com.example.daysjourney.util.IpSubnet;
+import com.example.daysjourney.network.APIResponseHandler;
+import com.example.daysjourney.network.HttpUtil;
+import com.example.daysjourney.network.IpSubnet;
+import com.example.daysjourney.network.URLSource;
 import com.example.daysjourney.util.UrlSource;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -61,6 +64,7 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
 /**
  * Activity for the home registration page. This page comes right after a user's
@@ -95,13 +99,16 @@ public class RegisterHomeActivity extends Activity {
 	private static final String TAG = "RegisterHomeActivityLog";
 	private String subnetIPString;
 	private boolean bIsRegisterSucceeded;
-
+	private static final int SEARCH_PLACE = 1;
+	
+	private Path mPath;
+	
 	@SuppressLint("NewApi")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_register_home);
-
 		RegisterHomeActivity.this.startLocationService();
 
 		initResource();
@@ -113,27 +120,84 @@ public class RegisterHomeActivity extends Activity {
 		mSensorMngr = (SensorManager) this.getSystemService(Context.SENSOR_SERVICE);
 		mHomeMap = ((MapFragment) this.getFragmentManager().findFragmentById(R.id.home_map)).getMap();
 		mSearchLocationButton = (Button) this.findViewById(R.id.search_home_location_button);
-		myHomeLocationTextView = (TextView) this
-				.findViewById(R.id.text_my_home_location);
+		myHomeLocationTextView = (TextView) this.findViewById(R.id.text_my_home_location);
+		searchInsideBtn = (Button) this.findViewById(R.id.search_my_inside_arduino_button);
+		searchOutsideBtn = (Button) this.findViewById(R.id.search_my_outside_arduino_button);
+	}
+	
+	private String getUserId() {
+		return AccountManager.getInstance().getUserId(RegisterHomeActivity.this);
+	}
+	
+	/**
+	 * user_id 를 params[_id]로 넘겨서 id로 받는다.    
+	 */
+	private void createPath() {
+		String url = String.format(URLSource.PATHS, getUserId());
+		
+        HttpUtil.post(url, null, null, new APIResponseHandler(RegisterHomeActivity.this) {
+
+            @Override
+            public void onStart() {
+                super.onStart();
+            }
+
+            @Override
+            public void onFinish() {
+                super.onFinish();
+            }
+
+            @Override
+            public void onSuccess(JSONObject response) {
+                mPath = Path.build(response);
+                dispatchSearchPlace();
+            }
+        });
+	}
+	
+	private void dispatchSearchPlace() {
+		Intent intent = new Intent(RegisterHomeActivity.this,
+				SearchPlaceActivity.class);
+		intent.putExtra("todayPId", mPath.getPathId());
+		startActivityForResult(intent, SEARCH_PLACE);
 	}
 	
 	private void initEvent() {
 		mSearchLocationButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				// Go to the page for select a place
-				Intent intent = new Intent(RegisterHomeActivity.this,
-						SearchPlaceActivity.class);
-				startActivityForResult(intent, 1);
+				createPath();
 			}
 		});
 
-		searchInsideBtn = (Button) this
-				.findViewById(R.id.search_my_inside_arduino_button);
-		searchOutsideBtn = (Button) this
-				.findViewById(R.id.search_my_outside_arduino_button);
 		searchInsideBtn.setOnClickListener(new SearchArduinoButtonHandler());
 		searchOutsideBtn.setOnClickListener(new SearchArduinoButtonHandler());
+	}
+	
+	private void resetDestinationInfo(Destination destination) {
+		myHomeLocationTextView.setText(destination.getDescription().substring(0,
+				destination.getDescription().indexOf(",")));
+		showCurrentLocation(destination.getLatitude(),
+				destination.getLongitude());
+	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// TODO Auto-generated method stub
+		super.onActivityResult(requestCode, resultCode, data);
+		if (resultCode == RESULT_OK) {
+			switch (requestCode) {
+			case SEARCH_PLACE:
+				Bundle bundle = data.getBundleExtra("placeInfo");
+				Destination destination = (Destination) bundle
+						.getSerializable("destination");
+				resetDestinationInfo(destination);
+				break;
+
+			default:
+				break;
+			}
+		}
 	}
 
 	private class SearchArduinoButtonHandler implements OnClickListener {
@@ -187,7 +251,6 @@ public class RegisterHomeActivity extends Activity {
 
 				@Override
 				public void onFailure(Throwable error, String content) {
-					// TODO Auto-generated method stub
 					((Button) view).setText(subnetIPString);
 					if (pingFrom < pingTo) {
 						pingFrom++;
@@ -198,7 +261,6 @@ public class RegisterHomeActivity extends Activity {
 
 				@Override
 				public void onSuccess(String content) {
-					// TODO Auto-generated method stub
 					exactUrl = pingUrl;
 					showToastMsg("코넥트 성공~~~" + exactUrl + "\n" + subnetIPString);
 					((Button) view).setText(subnetIPString);
@@ -215,16 +277,13 @@ public class RegisterHomeActivity extends Activity {
 					}
 					view.setEnabled(true);
 					view.setOnClickListener(new OnClickListener() {
-
 						@Override
 						public void onClick(View v) {
-							// TODO Auto-generated method stub
 							showPopupWindow();
 							registerHardware();
 						}
 					});
 				}
-
 			});
 		}
 
@@ -321,35 +380,11 @@ public class RegisterHomeActivity extends Activity {
 					}
 				}
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			return bIsRegisterSucceeded;
 		}
 
-	}
-
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		// TODO Auto-generated method stub
-		super.onActivityResult(requestCode, resultCode, data);
-		if (resultCode == RESULT_OK) {
-			switch (requestCode) {
-			case 1:
-				Bundle bundle = data.getBundleExtra("placeInfo");
-				GooglePlacesVO placesVO = (GooglePlacesVO) bundle
-						.getSerializable("placesVO");
-				String desc = placesVO.getDescription();
-				this.myHomeLocationTextView.setText(desc.substring(0,
-						desc.indexOf(",")));
-				this.showCurrentLocation(placesVO.getLatitude(),
-						placesVO.getLongitude());
-				break;
-
-			default:
-				break;
-			}
-		}
 	}
 
 	private void startLocationService() {
@@ -419,17 +454,15 @@ public class RegisterHomeActivity extends Activity {
 	private void showToastMsg(String msg) {
 		Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
 	}
-
+	
 	@Override
 	protected void onPause() {
-		// TODO Auto-generated method stub
 		super.onPause();
 		this.mHomeMap.setMyLocationEnabled(false);
 	}
 
 	@Override
 	protected void onStop() {
-		// TODO Auto-generated method stub
 		super.onStop();
 		this.mLocationMngr.removeUpdates(mGpsListener);
 	}

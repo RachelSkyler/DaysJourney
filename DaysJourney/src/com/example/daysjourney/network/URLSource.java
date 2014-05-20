@@ -2,11 +2,9 @@ package com.example.daysjourney.network;
 
 import com.example.daysjourney.core.App;
 
-
-
-public class URL {
-	public static final String BASE_URL_DEVELOPMENT = "http://192.168.0.8:3000";
-	//TODO 나중에 실서버에 올리면...
+public class URLSource {
+	public static final String BASE_URL_DEVELOPMENT = "http://192.168.0.241:3000";
+//TODO 나중에 실서버에 올리면...
 	public static final String BASE_URL_PRODUCTION = "";
 	
 	public static final String getBaseUrl() {
@@ -18,9 +16,10 @@ public class URL {
 	}
 	
 	public static final String SIGN_UP = getBaseUrl() +"/users";
-	
 	public static final String SIGN_IN = getBaseUrl() + "/users/sign_in";
-
+	public static final String PATHS = getBaseUrl() + "/users/%s/paths";
+	public static final String DESTINATIONS = getBaseUrl() + "/paths/%s/destinations";
+	
 /**
 	기본 API를 기본으로 작성. 
     public static final String SIGN_UP = getBaseUrl() + "/users";

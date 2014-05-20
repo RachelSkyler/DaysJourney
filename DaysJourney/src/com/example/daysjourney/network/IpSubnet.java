@@ -1,4 +1,4 @@
-package com.example.daysjourney.util;
+package com.example.daysjourney.network;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
