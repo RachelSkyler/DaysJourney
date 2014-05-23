@@ -264,6 +264,8 @@ public class SearchPlaceActivity extends Activity {
 				}else {
 					destination.setHome(false);
 				}
+				destination.setDestinationId(getUpdateId());
+				
 				publishProgress(locObj);
 				
 				Log.e(TAG+"_DETAILS", locObj.toString());
@@ -283,6 +285,12 @@ public class SearchPlaceActivity extends Activity {
         boolean isHome = intent.getExtras().getBoolean("is_home");
 		return isHome;
     }
+	
+	private String getUpdateId() {
+		Intent intent = getIntent();
+		
+		return intent.getExtras().getString(Destination.DESTINATION_ID);
+	}
 	
 	private void startLocationService() {
 		// TODO Auto-generated method stub
@@ -321,9 +329,9 @@ public class SearchPlaceActivity extends Activity {
 	private void getLocation(Location location) {
 		Double latitude = location.getLatitude();
 		Double longitude = location.getLongitude();
-		String msg = "Your Current Location \nLatitude: " + latitude
+		/*String msg = "Your Current Location \nLatitude: " + latitude
 				+ ", Longitude: " + longitude;
-		Log.i(TAG, msg);
+		Log.i(TAG, msg);*/
 		
 		showCurrentLocation(latitude, longitude);
 	}

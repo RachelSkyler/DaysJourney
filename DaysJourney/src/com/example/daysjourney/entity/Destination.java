@@ -33,7 +33,7 @@ public class Destination implements Serializable {
 		}
 		
 		Destination destination = new Destination();
-		JSONObject pOid, uOid,dOid;
+		JSONObject pOid, dOid;
 		try {
 			pOid = json.getJSONObject(Path.PATH_ID);
 			destination.pathId = pOid.optString(User.OBJECT_ID);
@@ -102,5 +102,9 @@ public class Destination implements Serializable {
 
 	public void setReference(String reference) {
 		this.reference = reference;
+	}
+	
+	public void setDestinationId(String destinationId) {
+		this.destinationId = destinationId;
 	}
 }

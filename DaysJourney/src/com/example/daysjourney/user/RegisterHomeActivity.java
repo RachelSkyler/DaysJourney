@@ -155,10 +155,11 @@ public class RegisterHomeActivity extends BaseRegisterActivity {
 		mFinishRegisterBtn.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				System.out.println("check Prev 가 있는 지: "+checkPrev()+"Destination id :"+mHome.getDestinationId());
 				if (!checkPrev()) {
 					createHome(mHome);
-				} else {
-					//TODO updateHome(mHome);
+				} else if(mHome.getDestinationId() != null) {
+					updateDestination(mHome);
 				}
 				// TODO error handling
 				quitActivity();
@@ -269,10 +270,25 @@ public class RegisterHomeActivity extends BaseRegisterActivity {
 		});
 	}
 	
+	private void updateDestination(Destination destination) {
+		String url = String.format(URLSource.HOME_UPDATE, destination.getDestinationId());
+		
+		RequestParams params = new RequestParams();
+		params.put(Destination.HOME, destination.getHome());
+	    params.put(Destination.DESCRIPTION, destination.getDescription());
+	    params.put(Destination.REFERENCE, destination.getReference());
+	    params.put(Destination.LATITUDE, String.valueOf(destination.getLatitude()));
+	    params.put(Destination.LONGITUDE, String.valueOf(destination.getLongitude()));
+		
+		HttpUtil.put(url, null, params, new APIResponseHandler(RegisterHomeActivity.this));
+	}
+	
 	private void dispatchSearchPlace() {
 		Intent intent = new Intent(RegisterHomeActivity.this,
 				SearchPlaceActivity.class);
 		intent.putExtra("is_home", true);
+		if (!(mHome == null))
+			intent.putExtra(Destination.DESTINATION_ID, mHome.getDestinationId());
 		startActivityForResult(intent, SEARCH_PLACE);
 	}
 	
