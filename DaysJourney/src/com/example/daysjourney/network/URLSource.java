@@ -2,8 +2,6 @@ package com.example.daysjourney.network;
 
 import com.example.daysjourney.core.App;
 
-
-
 public class URLSource {
 	public static final String BASE_URL_DEVELOPMENT = "http://172.20.10.5:3000";
 	//TODO 나중에 실서버에 올리면...
