@@ -14,15 +14,18 @@ public class Destination implements Serializable {
 	public static final String NAME = "location_name";
 	public static final String LATITUDE = "latitude";
     public static final String LONGITUDE = "longitude";
-	
+    public static final String HOME = "is_home";	
+    
 	private String destinationId;
 	private String pathId;
 	private String description;
 	private String reference;
 	private String name;
 	private String address;
+	private boolean home;
 	private double longitude;
 	private double latitude;
+	
 	
 	public static Destination build(JSONObject json) {
 		if (json == null) {
@@ -44,8 +47,9 @@ public class Destination implements Serializable {
 		destination.description = json.optString(DESCRIPTION);
 		destination.reference = json.optString(REFERENCE);
 		destination.name = json.optString(NAME);
-		destination.latitude = json.optDouble(LATITUDE);
-		destination.longitude = json.optDouble(LONGITUDE);
+		destination.latitude = Double.parseDouble(json.optString(LATITUDE));
+		destination.longitude = Double.parseDouble(json.optString(LONGITUDE));
+		destination.home = Boolean.valueOf(json.optString(HOME));
 		return destination;
 	}
 
@@ -76,7 +80,14 @@ public class Destination implements Serializable {
 	public double getLatitude() {
 		return latitude;
 	}
-
+	
+	public boolean getHome() {
+		return home;
+	}
+	
+	public void setHome(boolean home) { 
+		this.home = home;
+	}
 	public void setLatitude(double latitude) {
 		this.latitude = latitude;
 	}

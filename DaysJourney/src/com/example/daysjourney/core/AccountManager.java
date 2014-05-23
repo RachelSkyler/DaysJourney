@@ -23,14 +23,12 @@ public class AccountManager {
 	}
 	
 	public void signIn(Context context, User user) {
-		//TODO call the methods such as setUserId(context, user.getUserId()+""); , setUsername, setEncryptedPassword
 		setUserId(context, user.getUserId() +"");
 		setUsername(context, user.getUsername());
 		setEncrytedPassword(context, user.getEncryptedPassword());
 	}
 	
 	public void signOut(Context context) {
-		//TODO call the methods such as setUserId(context, "");
 		setUserId(context, "");
 		setUsername(context, "");
 		setEncrytedPassword(context, "");

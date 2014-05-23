@@ -123,53 +123,14 @@ public class SearchPlaceActivity extends Activity {
 		mConfirmBtn.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				executeCreatingDestination();
-			}
-		});
-	}
-	
-	private String checkPath() {
-        Intent intent = getIntent();
-        String todayPId = intent.getExtras().getString("todayPId");
-		return todayPId;
-    }
-	
-	private void executeCreatingDestination() {
-		if(destination == null) return;
-		
-		String url = String.format(URLSource.DESTINATIONS, checkPath());
-		
-		RequestParams params = new RequestParams();
-	    params.put(Destination.DESCRIPTION, destination.getDescription());
-	    params.put(Destination.REFERENCE, destination.getReference());
-	    params.put(Destination.LATITUDE, String.valueOf(destination.getLatitude()));
-	    params.put(Destination.LONGITUDE, String.valueOf(destination.getLongitude()));
-	    params.put("is_home", true);
-		
-        HttpUtil.post(url, null, params, new APIResponseHandler(SearchPlaceActivity.this) {
-
-            @Override
-            public void onStart() {
-                super.onStart();
-            }
-
-            @Override
-            public void onFinish() {
-                super.onFinish();
-            }
-
-            @Override
-            public void onSuccess(JSONObject response) {
-				//return to previous activity
 				Intent intent = new Intent();
 				Bundle bundle = new Bundle();
 				bundle.putSerializable("destination", destination);
 				intent.putExtra("placeInfo", bundle);
 				setResult(RESULT_OK, intent);
 				finish();
-            }
-        });
-		
+			}
+		});
 	}
 	
 	private class AsyncGetPlaces extends AsyncTask<String, Void, ArrayList<Destination>> {
@@ -298,7 +259,11 @@ public class SearchPlaceActivity extends Activity {
 				JSONObject locObj = jsonObj.getJSONObject("result").getJSONObject("geometry").getJSONObject("location");
 				destination.setLatitude(locObj.getDouble("lat"));
 				destination.setLongitude(locObj.getDouble("lng"));
-				
+				if (isHome()) {
+					destination.setHome(true);
+				}else {
+					destination.setHome(false);
+				}
 				publishProgress(locObj);
 				
 				Log.e(TAG+"_DETAILS", locObj.toString());
@@ -312,6 +277,12 @@ public class SearchPlaceActivity extends Activity {
 		}
 		
 	}
+	
+	private boolean isHome() {
+        Intent intent = getIntent();
+        boolean isHome = intent.getExtras().getBoolean("is_home");
+		return isHome;
+    }
 	
 	private void startLocationService() {
 		// TODO Auto-generated method stub

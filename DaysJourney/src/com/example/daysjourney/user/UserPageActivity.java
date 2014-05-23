@@ -12,10 +12,13 @@ import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.Window;
 import android.widget.Toast;
 
 import com.example.daysjourney.R;
 import com.example.daysjourney.common.MainActivity;
+import com.example.daysjourney.core.AccountManager;
+import com.example.daysjourney.entity.User;
 
 /**
  * Activity for the user page. Whether user is signed in or not will be
@@ -48,6 +51,8 @@ public class UserPageActivity extends ActionBarActivity {
 	 * The {@link ViewPager} that will host the section contents.
 	 */
 	ViewPager mViewPager;
+	
+	String mUserId;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -65,18 +70,19 @@ public class UserPageActivity extends ActionBarActivity {
 			finish();
 			return;
 		}
-
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_user_path_main);
-
+		initResources();
+	}
+	
+	private void initResources() {
 		// Create the adapter that will return a fragment for each of the three
 		// primary sections of the activity
-		mSectionsPagerAdapter = new SectionsPagerAdapter(
-				getSupportFragmentManager());
+		mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
 		// Set up the ViewPager with the sections adapter
 		mViewPager = (ViewPager) findViewById(R.id.pager);
 		mViewPager.setAdapter(mSectionsPagerAdapter);
-
 	}
 
 	/**
@@ -100,7 +106,7 @@ public class UserPageActivity extends ActionBarActivity {
 			case 1:
 				return EnvironmentInsideInfoFragment.newInstance(position + 1);
 			case 2:
-				return EnvironmentOutsideInfoFragment.newInstance(position+1);
+				return EnvironmentOutsideInfoFragment.newInstance(position + 1);
 
 			default:
 				return null;

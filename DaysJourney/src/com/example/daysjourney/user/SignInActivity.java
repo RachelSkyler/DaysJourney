@@ -178,12 +178,15 @@ public class SignInActivity extends Activity implements View.OnClickListener{
 
             @Override
             public void onSuccess(JSONObject response) {
-                AccountManager.getInstance().signIn(SignInActivity.this, User.build(response));
+            	User user = User.build(response);
+                AccountManager.getInstance().signIn(SignInActivity.this, user);
 
                 UserPageActivity.isSignedIn = true;
-				Intent intent = new Intent(SignInActivity.this, UserPageActivity.class);
-				startActivity(intent);
-				setResult(RESULT_OK, null);
+                
+                Intent intent = new Intent();
+				intent.putExtra(User.USER_ID, user.getUserId());
+				setResult(Activity.RESULT_OK, intent);
+				
 				finish();
             }
         });

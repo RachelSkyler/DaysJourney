@@ -1,5 +1,8 @@
 package com.example.daysjourney.user;
 
+import org.json.JSONObject;
+
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -11,7 +14,12 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.daysjourney.R;
+import com.example.daysjourney.core.AccountManager;
+import com.example.daysjourney.entity.Destination;
 import com.example.daysjourney.map.GooglePlacesVO;
+import com.example.daysjourney.network.APIResponseHandler;
+import com.example.daysjourney.network.HttpUtil;
+import com.example.daysjourney.network.URLSource;
 
 /**
  * Activity for the user path page. User can set home information and the places
@@ -19,11 +27,18 @@ import com.example.daysjourney.map.GooglePlacesVO;
  * information should be shown, and the sequence problem also should be solved.
  * 
  */
+@SuppressLint("ValidFragment") 
 public class UserPathFragment extends Fragment {
 
 	Button userPathHomeButtonTop;
 	Button userPathAddPlaceBotton;
 	Button userPathHomeButtonBottom;
+	
+	private static final int REGISTER_HOME = 1;
+	private static final int REGISTER_DESTINATION = 2;
+	
+	private String userId;
+	private Destination mHome;
 
 	public static UserPathFragment newInstance(int position) {
 		UserPathFragment frg = new UserPathFragment();
@@ -32,8 +47,19 @@ public class UserPathFragment extends Fragment {
 		frg.setArguments(bundle);
 		return frg;
 	}
-
-
+	
+	private void dispatchRegisterHome(Intent intent) {
+		//TODO home 정보를 가져와서 입력. 아니면 Flag 만 넘겨서...
+		intent = new Intent(getActivity(), RegisterHomeActivity.class);
+		intent.putExtra("prev", "user_path" );
+		startActivityForResult(intent, REGISTER_HOME);
+	}
+	
+	private void dispatchRegisterDestination(Intent intent) {
+		intent = new Intent(getActivity(),RegisterDestinationActivity.class);
+		startActivityForResult(intent, REGISTER_DESTINATION);
+	}
+	
 	private class ButtonClickHandler implements OnClickListener {
 
 		@Override
@@ -43,17 +69,13 @@ public class UserPathFragment extends Fragment {
 			Intent intent = null;
 			switch (buttonId) {
 			case R.id.user_path_home_button_top:
-				intent = new Intent(getActivity(), RegisterHomeActivity.class);
-				startActivityForResult(intent, 1);
+				dispatchRegisterHome(intent);
 				break;
 			case R.id.user_path_home_button_bottom:
-				intent = new Intent(getActivity(), RegisterHomeActivity.class);
-				startActivityForResult(intent, 1);
+				dispatchRegisterHome(intent);
 				break;
 			case R.id.user_path_add_place_button:
-				intent = new Intent(getActivity(),
-						RegisterDestinationActivity.class);
-				startActivityForResult(intent, 2);
+				dispatchRegisterDestination(intent);
 				break;
 			default:
 				break;
@@ -69,13 +91,11 @@ public class UserPathFragment extends Fragment {
 		super.onActivityResult(requestCode, resultCode, data);
 		if (resultCode == getActivity().RESULT_OK) {
 			switch (requestCode) {
-			case 1:
-				Bundle bundle = data.getBundleExtra("placeInfo");
-				GooglePlacesVO placesVO = (GooglePlacesVO) bundle.getSerializable("placesVO");
-				this.showToastMsg(placesVO.toString());
+			case REGISTER_HOME:
+				
 				break;
 
-			case 2:
+			case REGISTER_DESTINATION:
 				
 				break;
 
@@ -84,7 +104,7 @@ public class UserPathFragment extends Fragment {
 			}
 		}
 	}
-
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -102,7 +122,7 @@ public class UserPathFragment extends Fragment {
 		userPathHomeButtonTop.setOnClickListener(new ButtonClickHandler());
 		userPathAddPlaceBotton.setOnClickListener(new ButtonClickHandler());
 		userPathHomeButtonBottom.setOnClickListener(new ButtonClickHandler());
-
+		
 		return view;
 	}
 	

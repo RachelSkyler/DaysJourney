@@ -5,7 +5,7 @@ import com.example.daysjourney.core.App;
 
 
 public class URLSource {
-	public static final String BASE_URL_DEVELOPMENT = "http://192.168.0.241:3000";
+	public static final String BASE_URL_DEVELOPMENT = "http://172.20.10.5:3000";
 	//TODO 나중에 실서버에 올리면...
 	public static final String BASE_URL_PRODUCTION = "";
 	
@@ -21,7 +21,9 @@ public class URLSource {
 	public static final String SIGN_IN = getBaseUrl() + "/users/sign_in";
 	public static final String PATHS = getBaseUrl() + "/users/%s/paths";
 	public static final String DESTINATIONS = getBaseUrl() + "/paths/%s/destinations";
-	
+	public static final String DESTINATIONS_INFO = getBaseUrl() + "/destinations/%s";
+	public static final String HOME_INFO = getBaseUrl() + "/destinations/%s/home";
+	public static final String HOME_UPDATE = getBaseUrl() + "/destinations/%s";
 /**
 	기본 API를 기본으로 작성. 
     public static final String SIGN_UP = getBaseUrl() + "/users";

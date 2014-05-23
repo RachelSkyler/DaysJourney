@@ -33,6 +33,8 @@ public class Path implements Serializable {
 			e.printStackTrace();
 		}
 		path.createdAt = json.optString(CREATED_AT);
+		//TODO : 어떤 형식으로 넘어오는지 ...
+		System.out.println(path.createdAt);
 		return path;
 	}
 

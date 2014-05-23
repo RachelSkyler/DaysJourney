@@ -74,21 +74,19 @@ import com.loopj.android.http.RequestParams;
  * sure that the user does not yet have registered home, we ask him/her to
  * register a home location and the arduinos.
  */
-public class RegisterHomeActivity extends Activity {
+public class RegisterHomeActivity extends BaseRegisterActivity {
 
 	/**
 	 * Member variables used for destination map in this activity.
 	 */
-
-	private GoogleMap mHomeMap;
-	private SensorManager mSensorMngr;
 	private LocationManager mLocationMngr;
 	private GPSListener mGpsListener;
 
 	private TextView myHomeLocationTextView;
-	private Button searchInsideBtn;
-	private Button searchOutsideBtn;
+	private Button mSearchInsideBtn;
+	private Button mSearchOutsideBtn;
 	private Button mSearchLocationButton;
+	private Button mFinishRegisterBtn;
 	
 	// Popup view
 	private PopupWindow popup;
@@ -97,11 +95,13 @@ public class RegisterHomeActivity extends Activity {
 	private EditText pwEt;
 	
 	private static final String TAG = "RegisterHomeActivityLog";
+	private static final String USER_PATH = "user_path";
 	private String subnetIPString;
 	private boolean bIsRegisterSucceeded;
 	private static final int SEARCH_PLACE = 1;
 	
 	private Path mPath;
+	private Destination mHome;
 	
 	@SuppressLint("NewApi")
 	@Override
@@ -109,22 +109,110 @@ public class RegisterHomeActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_register_home);
-		RegisterHomeActivity.this.startLocationService();
+		
+		if (!checkPrev())
+			RegisterHomeActivity.this.startLocationService();
 
 		initResource();
 		initEvent();
+		getHomeInfo();
+	}
+	
+	private boolean checkPrev() {
+		boolean result = false;
+		Intent intent = this.getIntent();
+		String prev =  intent.getExtras().getString("prev");
+		
+		if (prev.equals(USER_PATH)) {
+			result = true;
+		}
+		
+		return result;
 	}
 	
 	@SuppressLint("NewApi") 
 	private void initResource(){
 		mSensorMngr = (SensorManager) this.getSystemService(Context.SENSOR_SERVICE);
-		mHomeMap = ((MapFragment) this.getFragmentManager().findFragmentById(R.id.home_map)).getMap();
+		mMap = ((MapFragment) this.getFragmentManager().findFragmentById(R.id.home_map)).getMap();
 		mSearchLocationButton = (Button) this.findViewById(R.id.search_home_location_button);
 		myHomeLocationTextView = (TextView) this.findViewById(R.id.text_my_home_location);
-		searchInsideBtn = (Button) this.findViewById(R.id.search_my_inside_arduino_button);
-		searchOutsideBtn = (Button) this.findViewById(R.id.search_my_outside_arduino_button);
+		mSearchInsideBtn = (Button) this.findViewById(R.id.search_my_inside_arduino_button);
+		mSearchOutsideBtn = (Button) this.findViewById(R.id.search_my_outside_arduino_button);
+		mFinishRegisterBtn = (Button) this.findViewById(R.id.finish_register_home_button);
 	}
 	
+	private void initEvent() {
+		mSearchLocationButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if (!checkPrev())
+					createPath();
+					
+				dispatchSearchPlace();	
+			}
+		});
+		
+		mFinishRegisterBtn.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if (!checkPrev()) {
+					createHome(mHome);
+				} else {
+					//TODO updateHome(mHome);
+				}
+				// TODO error handling
+				quitActivity();
+			}
+		});
+		mSearchInsideBtn.setOnClickListener(new SearchArduinoButtonHandler());
+		mSearchOutsideBtn.setOnClickListener(new SearchArduinoButtonHandler());
+	}
+	
+	private void quitActivity() {
+		setResult(Activity.RESULT_OK);
+		finish();
+	}
+	
+	private void startLocationService() {
+		// TODO Auto-generated method stub
+		mLocationMngr = (LocationManager) this
+				.getSystemService(Context.LOCATION_SERVICE);
+
+		mGpsListener = new GPSListener();
+		long minTime = 10000;
+		float minDistance = 0;
+
+		mLocationMngr.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+				minTime, minDistance, mGpsListener);
+		mLocationMngr.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
+				minTime, minDistance, mGpsListener);
+
+		try {
+			Location lastLocation = mLocationMngr
+					.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+			if (lastLocation != null) {
+				Double latitude = lastLocation.getLatitude();
+				Double longitude = lastLocation.getLongitude();
+				String msg = "Your Current Location \nLatitude: " + latitude
+						+ ", Longitude: " + longitude;
+				Log.i(TAG, msg);
+				// this.showToastMsg(msg);
+				showCurrentLocation(latitude, longitude);
+			}
+		} catch (Exception e) {
+			String msg = "Failed to get current location. Please try later.";
+			Log.e(TAG, msg);
+			showToastMsg(msg);
+		}
+
+	}
+	
+	private void resetDestinationInfo(Destination destination) {
+		myHomeLocationTextView.setText(destination.getDescription().substring(0,
+				destination.getDescription().indexOf(",")));
+		showCurrentLocation(destination.getLatitude(),
+				destination.getLongitude());
+	}
 	private String getUserId() {
 		return AccountManager.getInstance().getUserId(RegisterHomeActivity.this);
 	}
@@ -136,50 +224,58 @@ public class RegisterHomeActivity extends Activity {
 		String url = String.format(URLSource.PATHS, getUserId());
 		
         HttpUtil.post(url, null, null, new APIResponseHandler(RegisterHomeActivity.this) {
-
-            @Override
-            public void onStart() {
-                super.onStart();
-            }
-
-            @Override
-            public void onFinish() {
-                super.onFinish();
-            }
-
+        	
             @Override
             public void onSuccess(JSONObject response) {
                 mPath = Path.build(response);
-                dispatchSearchPlace();
             }
         });
+	}
+	
+	private void createHome(Destination destination) {
+		if(destination == null) return;
+		
+		String url = String.format(URLSource.DESTINATIONS, mPath.getPathId());
+		
+		RequestParams params = new RequestParams();
+		params.put(Destination.HOME, destination.getHome());
+	    params.put(Destination.DESCRIPTION, destination.getDescription());
+	    params.put(Destination.REFERENCE, destination.getReference());
+	    params.put(Destination.LATITUDE, String.valueOf(destination.getLatitude()));
+	    params.put(Destination.LONGITUDE, String.valueOf(destination.getLongitude()));
+		
+        HttpUtil.post(url, null, params, new APIResponseHandler(RegisterHomeActivity.this) {
+        	
+            @Override
+            public void onSuccess(JSONObject response) {
+				//return to previous activity
+            }
+        });
+		
+	}
+	
+	private void getHomeInfo() {
+		// user email 에 맞추어서 찾은 다음에 home 정보를 가져온다. 
+		String url = String.format(URLSource.HOME_INFO,AccountManager.getInstance().getUserId(this));
+		
+		HttpUtil.get(url, null, null, new APIResponseHandler(RegisterHomeActivity.this) {
+
+			@Override
+			public void onSuccess(JSONObject response) {
+				super.onSuccess(response);
+				mHome = Destination.build(response);
+				resetDestinationInfo(mHome);
+			}
+		});
 	}
 	
 	private void dispatchSearchPlace() {
 		Intent intent = new Intent(RegisterHomeActivity.this,
 				SearchPlaceActivity.class);
-		intent.putExtra("todayPId", mPath.getPathId());
+		intent.putExtra("is_home", true);
 		startActivityForResult(intent, SEARCH_PLACE);
 	}
 	
-	private void initEvent() {
-		mSearchLocationButton.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				createPath();
-			}
-		});
-
-		searchInsideBtn.setOnClickListener(new SearchArduinoButtonHandler());
-		searchOutsideBtn.setOnClickListener(new SearchArduinoButtonHandler());
-	}
-	
-	private void resetDestinationInfo(Destination destination) {
-		myHomeLocationTextView.setText(destination.getDescription().substring(0,
-				destination.getDescription().indexOf(",")));
-		showCurrentLocation(destination.getLatitude(),
-				destination.getLongitude());
-	}
 	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -189,9 +285,9 @@ public class RegisterHomeActivity extends Activity {
 			switch (requestCode) {
 			case SEARCH_PLACE:
 				Bundle bundle = data.getBundleExtra("placeInfo");
-				Destination destination = (Destination) bundle
+				mHome = (Destination) bundle
 						.getSerializable("destination");
-				resetDestinationInfo(destination);
+				resetDestinationInfo(mHome);
 				break;
 
 			default:
@@ -225,14 +321,14 @@ public class RegisterHomeActivity extends Activity {
 				if (bOnline)
 					subnetUrl = IpSubnet.getIpSubnet().getSubnet()
 							+ "/sensorData/insideHome/all";
-				searchOutsideBtn.setEnabled(false);
+				mSearchOutsideBtn.setEnabled(false);
 				scanNet(v);
 				break;
 			case R.id.search_my_outside_arduino_button:
 				if (bOnline)
 					subnetUrl = IpSubnet.getIpSubnet().getSubnet()
 							+ "/sensorData/outsideHome/all";
-				searchInsideBtn.setEnabled(false);
+				mSearchInsideBtn.setEnabled(false);
 				scanNet(v);
 				break;
 			default:
@@ -266,10 +362,10 @@ public class RegisterHomeActivity extends Activity {
 					((Button) view).setText(subnetIPString);
 					switch (view.getId()) {
 					case R.id.search_my_inside_arduino_button:
-						searchOutsideBtn.setEnabled(true);
+						mSearchOutsideBtn.setEnabled(true);
 						break;
 					case R.id.search_my_outside_arduino_button:
-						searchInsideBtn.setEnabled(true);
+						mSearchInsideBtn.setEnabled(true);
 						break;
 
 					default:
@@ -385,100 +481,6 @@ public class RegisterHomeActivity extends Activity {
 			return bIsRegisterSucceeded;
 		}
 
-	}
-
-	private void startLocationService() {
-		// TODO Auto-generated method stub
-		mLocationMngr = (LocationManager) this
-				.getSystemService(Context.LOCATION_SERVICE);
-
-		mGpsListener = new GPSListener();
-		long minTime = 10000;
-		float minDistance = 0;
-
-		mLocationMngr.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-				minTime, minDistance, mGpsListener);
-		mLocationMngr.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
-				minTime, minDistance, mGpsListener);
-
-		try {
-			Location lastLocation = mLocationMngr
-					.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-			if (lastLocation != null) {
-				Double latitude = lastLocation.getLatitude();
-				Double longitude = lastLocation.getLongitude();
-				String msg = "Your Current Location \nLatitude: " + latitude
-						+ ", Longitude: " + longitude;
-				Log.i(TAG, msg);
-				// this.showToastMsg(msg);
-				this.showCurrentLocation(latitude, longitude);
-			}
-		} catch (Exception e) {
-			String msg = "Failed to get current location. Please try later.";
-			Log.e(TAG, msg);
-			this.showToastMsg(msg);
-		}
-
-	}
-
-	private void showCurrentLocation(Double latitude, Double longitude) {
-		LatLng curPoint = new LatLng(latitude, longitude);
-		mHomeMap.animateCamera(CameraUpdateFactory.newLatLngZoom(curPoint, 15));
-		mHomeMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-	}
-
-	private class GPSListener implements LocationListener {
-
-		@Override
-		public void onLocationChanged(Location location) {
-			// TODO Auto-generated method stub
-			Double latitude = location.getLatitude();
-			Double longitude = location.getLongitude();
-			String msg = "Your Current Location \nLatitude: " + latitude
-					+ ", Longitude: " + longitude;
-			Log.i(TAG, msg);
-			// RegisterHomeActivity.this.showToastMsg(msg);
-			showCurrentLocation(latitude, longitude);
-		}
-
-		@Override
-		public void onStatusChanged(String provider, int status, Bundle extras) {}
-		
-		@Override
-		public void onProviderEnabled(String provider) {}
-		
-		@Override
-		public void onProviderDisabled(String provider) {}
-	}
-
-	private void showToastMsg(String msg) {
-		Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
-	}
-	
-	@Override
-	protected void onPause() {
-		super.onPause();
-		this.mHomeMap.setMyLocationEnabled(false);
-	}
-
-	@Override
-	protected void onStop() {
-		super.onStop();
-		this.mLocationMngr.removeUpdates(mGpsListener);
-	}
-
-	@Override
-	protected void onDestroy() {
-		// TODO Auto-generated method stub
-		super.onDestroy();
-		this.mLocationMngr.removeUpdates(mGpsListener);
-	}
-
-	@Override
-	protected void onResume() {
-		// TODO Auto-generated method stub
-		super.onResume();
-		this.mHomeMap.setMyLocationEnabled(true);
 	}
 
 	private boolean isNetworkPresent() {

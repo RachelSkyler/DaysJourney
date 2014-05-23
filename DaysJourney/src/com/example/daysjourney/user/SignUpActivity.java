@@ -211,7 +211,7 @@ public class SignUpActivity extends Activity implements View.OnClickListener {
 				// Show a progress spinner, and kick off a background task to
 				// perform the user login attempt.
 				mSignUpStatusMessageView.setText(R.string.sign_up_progress);
-				showProgress(true);
+				showProgress(false);
 				//TODO: if view loading layout is made, then implement this method.
 				//showLoading(); 
 			}
@@ -219,16 +219,20 @@ public class SignUpActivity extends Activity implements View.OnClickListener {
 			@Override
 			public void onStart() {
 				super.onStart();
-				//hideLoading();
+				showProgress(true);
 				
 			}
 
 			@Override
 			public void onSuccess(JSONObject response) {
-				setResult(Activity.RESULT_OK);
-				AccountManager.getInstance().signIn(SignUpActivity.this, User.build(response));
 				UserPageActivity.isSignedIn = true;
-				showProgress(false);
+				User user = User.build(response);
+				AccountManager.getInstance().signIn(SignUpActivity.this, user);
+				
+				Intent intent = new Intent();
+				intent.putExtra(User.USER_ID, user.getUserId());
+				setResult(Activity.RESULT_OK, intent);
+			
 				finish();
 			}
 			
