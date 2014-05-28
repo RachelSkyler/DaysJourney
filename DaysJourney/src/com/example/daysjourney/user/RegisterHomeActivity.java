@@ -113,7 +113,6 @@ public class RegisterHomeActivity extends BaseRegisterActivity {
 		
 		bPathIsRegistered = PathManager.getInstance().isRegisteredPath(RegisterHomeActivity.this);
 		
-		System.out.println("Today's path is registered: " + bPathIsRegistered);
 		if (bPathIsRegistered) {
 			getHomeInfo();
 		} else {
