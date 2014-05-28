@@ -5,7 +5,7 @@
 
 ##Service
 
-    You can register today's destination and be possible to receive environment information such as 'a degree of Temperature and Brighiness' 
+  You can register today's destination and be possible to receive environment information such as 'a degree of Temperature and Brighiness' 
   
 ##Related Projects
 
