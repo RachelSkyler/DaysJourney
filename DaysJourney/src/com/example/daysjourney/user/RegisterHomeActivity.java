@@ -48,6 +48,7 @@ import android.widget.Toast;
 import com.example.daysjourney.R;
 import com.example.daysjourney.common.MainActivity;
 import com.example.daysjourney.core.AccountManager;
+import com.example.daysjourney.core.PathManager;
 import com.example.daysjourney.entity.Destination;
 import com.example.daysjourney.entity.Path;
 import com.example.daysjourney.entity.User;
@@ -98,10 +99,7 @@ public class RegisterHomeActivity extends BaseRegisterActivity {
 	private static final String USER_PATH = "user_path";
 	private String subnetIPString;
 	private boolean bIsRegisterSucceeded;
-	private static final int SEARCH_PLACE = 1;
-	
-	private Path mPath;
-	private Destination mHome;
+	private boolean bPathIsRegistered;
 	
 	@SuppressLint("NewApi")
 	@Override
@@ -110,12 +108,17 @@ public class RegisterHomeActivity extends BaseRegisterActivity {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_register_home);
 		
-		if (!checkPrev())
-			RegisterHomeActivity.this.startLocationService();
-
 		initResource();
 		initEvent();
-		getHomeInfo();
+		
+		bPathIsRegistered = PathManager.getInstance().isRegisteredPath(RegisterHomeActivity.this);
+		
+		System.out.println("Today's path is registered: " + bPathIsRegistered);
+		if (bPathIsRegistered) {
+			getHomeInfo();
+		} else {
+			RegisterHomeActivity.this.startLocationService();
+		}
 	}
 	
 	private boolean checkPrev() {
@@ -145,7 +148,7 @@ public class RegisterHomeActivity extends BaseRegisterActivity {
 		mSearchLocationButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (!checkPrev())
+				if (!bPathIsRegistered)
 					createPath();
 					
 				dispatchSearchPlace();	
@@ -155,11 +158,10 @@ public class RegisterHomeActivity extends BaseRegisterActivity {
 		mFinishRegisterBtn.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				System.out.println("check Prev 가 있는 지: "+checkPrev()+"Destination id :"+mHome.getDestinationId());
 				if (!checkPrev()) {
-					createHome(mHome);
-				} else if(mHome.getDestinationId() != null) {
-					updateDestination(mHome);
+					createDestination(mDestination);
+				} else if(mDestination.getDestinationId() != null) {
+					updateDestination(mDestination);
 				}
 				// TODO error handling
 				quitActivity();
@@ -167,6 +169,22 @@ public class RegisterHomeActivity extends BaseRegisterActivity {
 		});
 		mSearchInsideBtn.setOnClickListener(new SearchArduinoButtonHandler());
 		mSearchOutsideBtn.setOnClickListener(new SearchArduinoButtonHandler());
+	}
+	
+	private String getUserId() {
+		return AccountManager.getInstance().getUserId(RegisterHomeActivity.this);
+	}
+	
+	private void createPath() {
+		String url = String.format(URLSource.PATHS_CREATE, getUserId());
+		
+        HttpUtil.post(url, null, null, new APIResponseHandler(RegisterHomeActivity.this) {
+        	
+            @Override
+            public void onSuccess(JSONObject response) {
+                PathManager.getInstance().registerPath(RegisterHomeActivity.this, Path.build(response));
+            }
+        });
 	}
 	
 	private void quitActivity() {
@@ -208,55 +226,24 @@ public class RegisterHomeActivity extends BaseRegisterActivity {
 
 	}
 	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (resultCode == RESULT_OK) {
+			resetDestinationInfo(mDestination);
+		}
+	}
+	
+	
 	private void resetDestinationInfo(Destination destination) {
 		myHomeLocationTextView.setText(destination.getDescription().substring(0,
 				destination.getDescription().indexOf(",")));
 		showCurrentLocation(destination.getLatitude(),
 				destination.getLongitude());
 	}
-	private String getUserId() {
-		return AccountManager.getInstance().getUserId(RegisterHomeActivity.this);
-	}
 	
-	/**
-	 * user_id 를 params[_id]로 넘겨서 id로 받는다.    
-	 */
-	private void createPath() {
-		String url = String.format(URLSource.PATHS, getUserId());
-		
-        HttpUtil.post(url, null, null, new APIResponseHandler(RegisterHomeActivity.this) {
-        	
-            @Override
-            public void onSuccess(JSONObject response) {
-                mPath = Path.build(response);
-            }
-        });
-	}
-	
-	private void createHome(Destination destination) {
-		if(destination == null) return;
-		
-		String url = String.format(URLSource.DESTINATIONS, mPath.getPathId());
-		
-		RequestParams params = new RequestParams();
-		params.put(Destination.HOME, destination.getHome());
-	    params.put(Destination.DESCRIPTION, destination.getDescription());
-	    params.put(Destination.REFERENCE, destination.getReference());
-	    params.put(Destination.LATITUDE, String.valueOf(destination.getLatitude()));
-	    params.put(Destination.LONGITUDE, String.valueOf(destination.getLongitude()));
-		
-        HttpUtil.post(url, null, params, new APIResponseHandler(RegisterHomeActivity.this) {
-        	
-            @Override
-            public void onSuccess(JSONObject response) {
-				//return to previous activity
-            }
-        });
-		
-	}
 	
 	private void getHomeInfo() {
-		// user email 에 맞추어서 찾은 다음에 home 정보를 가져온다. 
 		String url = String.format(URLSource.HOME_INFO,AccountManager.getInstance().getUserId(this));
 		
 		HttpUtil.get(url, null, null, new APIResponseHandler(RegisterHomeActivity.this) {
@@ -264,54 +251,21 @@ public class RegisterHomeActivity extends BaseRegisterActivity {
 			@Override
 			public void onSuccess(JSONObject response) {
 				super.onSuccess(response);
-				mHome = Destination.build(response);
-				resetDestinationInfo(mHome);
+				mDestination = Destination.build(response);
+				resetDestinationInfo(mDestination);
 			}
 		});
-	}
-	
-	private void updateDestination(Destination destination) {
-		String url = String.format(URLSource.HOME_UPDATE, destination.getDestinationId());
-		
-		RequestParams params = new RequestParams();
-		params.put(Destination.HOME, destination.getHome());
-	    params.put(Destination.DESCRIPTION, destination.getDescription());
-	    params.put(Destination.REFERENCE, destination.getReference());
-	    params.put(Destination.LATITUDE, String.valueOf(destination.getLatitude()));
-	    params.put(Destination.LONGITUDE, String.valueOf(destination.getLongitude()));
-		
-		HttpUtil.put(url, null, params, new APIResponseHandler(RegisterHomeActivity.this));
 	}
 	
 	private void dispatchSearchPlace() {
 		Intent intent = new Intent(RegisterHomeActivity.this,
 				SearchPlaceActivity.class);
 		intent.putExtra("is_home", true);
-		if (!(mHome == null))
-			intent.putExtra(Destination.DESTINATION_ID, mHome.getDestinationId());
+		if (!(mDestination == null))
+			intent.putExtra(Destination.DESTINATION_ID, mDestination.getDestinationId());
 		startActivityForResult(intent, SEARCH_PLACE);
 	}
 	
-	
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		// TODO Auto-generated method stub
-		super.onActivityResult(requestCode, resultCode, data);
-		if (resultCode == RESULT_OK) {
-			switch (requestCode) {
-			case SEARCH_PLACE:
-				Bundle bundle = data.getBundleExtra("placeInfo");
-				mHome = (Destination) bundle
-						.getSerializable("destination");
-				resetDestinationInfo(mHome);
-				break;
-
-			default:
-				break;
-			}
-		}
-	}
-
 	private class SearchArduinoButtonHandler implements OnClickListener {
 
 		int pingFrom = 1;

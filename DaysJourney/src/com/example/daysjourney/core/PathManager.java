@@ -25,7 +25,11 @@ public class PathManager {
 		setCreatedAt(context, path.getCreatedAt());
 	}
 	
-	public boolean isRegisterTodayPath(Context context) {
+	public boolean isRegisteredPath(Context context) {
+		return !TextUtils.isEmpty(getPathId(context));
+	}
+	
+	public boolean isTodayPath(Context context) {
 		//TODO 오늘 날짜와 createdAt 이 동일한지.
 		boolean result = false;
 		/**if(!TextUtils.isEmpty(getPathId(context)) && TextUtils.equals(getCreatedAt(context), b)) {

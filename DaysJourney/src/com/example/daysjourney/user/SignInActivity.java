@@ -12,6 +12,7 @@ import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.animation.Animator;
@@ -22,6 +23,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.UserManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -32,6 +34,8 @@ import android.widget.TextView;
 import com.example.daysjourney.R;
 import com.example.daysjourney.common.MainActivity;
 import com.example.daysjourney.core.AccountManager;
+import com.example.daysjourney.core.PathManager;
+import com.example.daysjourney.entity.Path;
 import com.example.daysjourney.entity.User;
 import com.example.daysjourney.network.APIResponseHandler;
 import com.example.daysjourney.network.HttpUtil;
@@ -178,20 +182,36 @@ public class SignInActivity extends Activity implements View.OnClickListener{
 
             @Override
             public void onSuccess(JSONObject response) {
-            	User user = User.build(response);
-                AccountManager.getInstance().signIn(SignInActivity.this, user);
-
-                UserPageActivity.isSignedIn = true;
-                
-                Intent intent = new Intent();
-				intent.putExtra(User.USER_ID, user.getUserId());
-				setResult(Activity.RESULT_OK, intent);
-				
-				finish();
+            	JSONObject userObj, pathObj;
+            	try {
+            		userObj = response.getJSONObject("user");
+            		pathObj = response.getJSONObject("path");
+            		
+            		User user = User.build(userObj);
+                    AccountManager.getInstance().signIn(SignInActivity.this, user);
+                    
+                    Path path = Path.build(pathObj);
+                    PathManager.getInstance().registerPath(SignInActivity.this, path);
+                    
+                    finishSignInProcess(user);
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
             }
         });
 	}
-
+	
+	private void finishSignInProcess(User user) {
+		UserPageActivity.isSignedIn = true;
+        
+        Intent intent = new Intent();
+		intent.putExtra(User.USER_ID, user.getUserId());
+		setResult(Activity.RESULT_OK, intent);
+		
+		finish();
+	}
+	 	
 	/**
 	 * Represents an asynchronous login task used to authenticate the user.
 	 */
